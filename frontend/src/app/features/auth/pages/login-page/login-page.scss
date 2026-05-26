@@ -1,0 +1,21 @@
+/* login-page.scss */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 3rem;
+  
+  /* REMOVED: background, border, border-radius, box-shadow, and backdrop-filters */
+  /* These are now perfectly managed via the global .glass-panel utility! */
+
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.login-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}

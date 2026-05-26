@@ -1,0 +1,67 @@
+<div class="page-container">
+  <app-page-header title="Component Requests">
+    @if (userRole === 'STUDENT') {
+      <button routerLink="create" class="btn-primary-action">➕ New Request</button>
+    }
+  </app-page-header>
+
+  <div class="control-filter-bar glass-panel">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="Search by Request ID or Submitter ID..." 
+        [ngModel]="searchQuery$ | async" 
+        (ngModelChange)="searchQuery$.next($event)" />
+    </div>
+    
+    <div class="dropdown-filters">
+      <select [ngModel]="selectedStatus$ | async" (ngModelChange)="selectedStatus$.next($event)">
+        <option value="">All Statuses</option>
+        <option value="PENDING">PENDING</option>
+        <option value="APPROVED">APPROVED</option>
+        <option value="PARTIALLY_APPROVED">PARTIALLY APPROVED</option>
+        <option value="REJECTED">REJECTED</option>
+      </select>
+    </div>
+  </div>
+
+  @if (filteredRequests$ | async; as requests) {
+    <div class="table-container glass-panel">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Submitter ID</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Status</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (req of requests; track req.id) {
+            <tr>
+              <td><code>{{ req.id.substring(0, 8) }}...</code></td>
+              <td><code>{{ req.createdBy }}</code></td>
+              <td>{{ req.createdAt | date:'shortDate' }}</td>
+              <td>{{ req.items.length || 0 }} components</td>
+              <td>
+                <span class="badge" [attr.data-status]="req.status">{{ req.status }}</span>
+              </td>
+              <td class="text-right">
+                <button [routerLink]="[req.id]" class="btn-action btn-outline">View Details</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center dead-state">No requests found matching your query criteria.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">Loading requests directory records...</div>
+  }
+</div>

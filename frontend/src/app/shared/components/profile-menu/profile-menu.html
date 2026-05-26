@@ -1,0 +1,22 @@
+<div class="profile-menu-container">
+  
+  @if (isDropdownOpen) {
+    <div class="logout-dropdown glass-panel">
+      <button class="logout-btn" (click)="onLogout()">
+        <span class="icon">🚪</span> Logout
+      </button>
+    </div>
+  }
+
+  <div class="profile-card" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
+    <div class="avatar">
+      👤
+    </div>
+    <div class="user-details">
+      <span class="user-id">{{ collegeId }}</span>
+      <span class="user-role">{{ role | lowercase }}</span>
+    </div>
+    <div class="chevron" [class.rotated]="isDropdownOpen">▲</div>
+  </div>
+
+</div>

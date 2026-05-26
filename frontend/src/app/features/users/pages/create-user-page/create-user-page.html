@@ -1,0 +1,84 @@
+<div class="page-container">
+  <!-- <div class="page-header">
+    <div class="header-with-back">
+      <button routerLink="/dashboard/users" class="btn-back">⬅</button>
+      <h1>Create New User</h1>
+    </div>
+  </div> -->
+  <app-page-header title="Create New User" backRoute="/dashboard/users">
+  </app-page-header>
+
+  <div class="form-container glass-panel">
+    @if (errorMessage) {
+      <div class="error-toast">
+        <span>⚠️ {{ errorMessage }}</span>
+      </div>
+    }
+
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        
+        <div class="input-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="John Doe" formControlName="name" [class.invalid]="userForm.get('name')?.touched && userForm.get('name')?.invalid">
+          @if (userForm.get('name')?.touched && userForm.get('name')?.hasError('required')) {
+            <small class="error-text">Name is required</small>
+          }
+        </div>
+
+        <div class="input-group">
+          <label>College ID / System ID</label>
+          <input type="text" placeholder="STU10293" formControlName="collegeId" [class.invalid]="userForm.get('collegeId')?.touched && userForm.get('collegeId')?.invalid">
+          @if (userForm.get('collegeId')?.touched && userForm.get('collegeId')?.hasError('required')) {
+            <small class="error-text">College ID identifier is required</small>
+          }
+        </div>
+
+        <div class="input-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="johndoe@college.edu" formControlName="email" [class.invalid]="userForm.get('email')?.touched && userForm.get('email')?.invalid">
+          @if (userForm.get('email')?.touched && userForm.get('email')?.invalid) {
+            <small class="error-text">Please enter a valid academic email address</small>
+          }
+        </div>
+
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input type="text" placeholder="9876543210" formControlName="phone" [class.invalid]="userForm.get('phone')?.touched && userForm.get('phone')?.invalid">
+          @if (userForm.get('phone')?.touched && userForm.get('phone')?.invalid) {
+            <small class="error-text">Valid 10-digit phone tracking pattern required</small>
+          }
+        </div>
+
+        <div class="input-group full-width">
+          <label>Assign Security Role Group</label>
+          <div class="select-wrapper">
+            <select formControlName="role" [class.invalid]="userForm.get('role')?.touched && userForm.get('role')?.invalid">
+              <option value="">Select Account Profile Position Role</option>
+              @if (getRole() === 'SUPER_ADMIN') {
+                <option value="ADMIN">ADMIN</option>
+              }
+              <option value="INSTRUCTOR">INSTRUCTOR</option>
+              <option value="STUDENT">STUDENT</option>
+            </select>
+          </div>
+          @if (userForm.get('role')?.touched && userForm.get('role')?.hasError('required')) {
+            <small class="error-text">Security role selection assignment is required</small>
+          }
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="button" routerLink="/dashboard/users" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="userForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="spinner-inline"></span> Saving Records...
+          } @else {
+            Register Profile Account
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

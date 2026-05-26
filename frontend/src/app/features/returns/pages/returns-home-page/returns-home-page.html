@@ -1,0 +1,21 @@
+<div class="page-container">
+  <app-page-header title="Hardware Returns Desk"></app-page-header>
+
+  <div class="dashboard-grid">
+    @if (userRole !== 'STUDENT') {
+      <app-feature-card
+        link="active"
+        icon="📥"
+        title="Initiate Return"
+        description="View all currently checked-out hardware and process a new return transaction.">
+      </app-feature-card>
+    }
+
+    <app-feature-card
+      link="history"
+      icon="🗄️"
+      title="Return History"
+      description="View the log of all previously returned components, conditions, and receipts.">
+    </app-feature-card>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+@use '../styles/variable' as *;
+
+body {
+  min-height: 100vh;
+
+  background:
+    linear-gradient(
+      rgba(2, 6, 23, 0.88),
+      rgba(2, 6, 23, 0.92)
+    ),
+    url('../assests/images/login-bg-img.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  color: white;
+
+  font-family: 'Inter', sans-serif;
+
+  overflow-x: hidden;
+}

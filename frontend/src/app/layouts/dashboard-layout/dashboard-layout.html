@@ -1,0 +1,39 @@
+<div class="dashboard-container">
+
+  <app-sidebar
+    [isOpen]="isSidebarOpen"
+    (closeSidebar)="toggleSidebar()"
+  >
+  </app-sidebar>
+
+  <div class="main-content">
+
+    <header class="topbar">
+
+      <div class="left-section">
+
+        <button
+          class="burger-btn"
+          (click)="toggleSidebar()"
+        >
+          ☰
+        </button>
+
+        <h2 class="page-title">
+          Lab Management System
+        </h2>
+
+      </div>
+
+    </header>
+
+    <main class="page-body">
+
+      <router-outlet>
+      </router-outlet>
+
+    </main>
+
+  </div>
+
+</div>

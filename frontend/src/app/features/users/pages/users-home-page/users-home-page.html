@@ -1,0 +1,23 @@
+<div class="page-container">
+  <app-page-header title="User Space Command"></app-page-header>
+  
+  <div class="feature-grid">
+    <app-feature-card 
+      title="View Directory" 
+      description="Browse, filter, and modify system accounts or security statuses."
+      icon="👥"
+      link="/dashboard/users/list"
+      iconColor="var(--primary-blue)">
+    </app-feature-card>
+
+    @if (currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN') {
+      <app-feature-card 
+        title="Provision Account" 
+        description="Register a new academic member profile inside the laboratory."
+        icon="➕"
+        link="/dashboard/users/create"
+        iconColor="var(--primary-cyan)">
+      </app-feature-card>
+    }
+  </div>
+</div>

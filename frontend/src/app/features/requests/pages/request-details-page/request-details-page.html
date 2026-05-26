@@ -1,0 +1,61 @@
+<div class="page-container">
+  <app-page-header title="Request Overview" backRoute="/dashboard/requests"></app-page-header>
+
+  @if (request$ | async; as request) {
+    <div class="details-card glass-panel">
+      <div class="meta-header">
+        <div>
+          <h3>Request ID: <code>{{ request.id }}</code></h3>
+          <p class="subtitle">Submitted by {{ request.createdBy }} on {{ request.createdAt | date:'medium' }}</p>
+        </div>
+        <span class="badge large-badge" [attr.data-status]="request.status">{{ request.status }}</span>
+      </div>
+
+      <table class="glass-table detail-table">
+        <thead>
+          <tr>
+            <th>Component Name</th>
+            <th class="text-center">Requested Qty</th>
+            <th class="text-center">Approved Qty</th>
+            <th>Item Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (items$ | async; as items) {
+            @for (item of items; track item.id) {
+              <tr>
+                <td class="font-bold">{{ item.componentName || item.componentId }}</td>
+                <td class="text-center">{{ item.quantityRequested }}</td>
+                
+                <td class="text-center">
+                  @if (userRole === 'INSTRUCTOR' && request.status === 'PENDING') {
+                    <input type="number" class="approval-input" [(ngModel)]="item.editableApprovedQty" min="0" [max]="item.quantityRequested">
+                  } @else {
+                    {{ item.quantityApproved }}
+                  }
+                </td>
+                
+                <td><span class="badge" [attr.data-status]="item.status">{{ item.status }}</span></td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="text-center">No items found for this request.</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+
+      @if (userRole === 'INSTRUCTOR' && request.status === 'PENDING') {
+        <div class="action-footer">
+          <button class="btn-reject" [disabled]="isProcessing" (click)="processRejection()">Reject Entire Request</button>
+          <button class="btn-approve" [disabled]="isProcessing" (click)="processApproval()">Submit Approvals</button>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">
+      <p>Loading request details...</p>
+    </div>
+  }
+</div>

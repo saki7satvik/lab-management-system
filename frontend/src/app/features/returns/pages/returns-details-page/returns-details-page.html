@@ -1,0 +1,91 @@
+<div class="page-container">
+  <app-page-header title="Hardware Return Receipt" backRoute="/dashboard/returns"></app-page-header>
+
+  @if (returnDetails$ | async; as details) {
+    <div class="details-card glass-panel">
+      
+      <div class="meta-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+        <div>
+          <h3>Return Transaction: <code>{{ details.id }}</code></h3>
+          <p class="subtitle mt-1">
+            Original Checkout Request: 
+            <a [routerLink]="['/dashboard/requests', details.requestId]" class="link-cyan">
+              {{ details.requestId }}
+            </a>
+          </p>
+        </div>
+        <div class="status-group text-right">
+          <span class="badge large-badge" [attr.data-status]="details.status || 'INITIATED'">
+            {{ details.status ? details.status.replace('_', ' ') : 'INITIATED' }}
+          </span>
+          @if (details.fineGenerated) {
+            <div class="mt-1"><span class="badge tag-red">FINE PENDING</span></div>
+          }
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <span class="label">Returned By</span>
+          <span class="value font-bold">{{ details.returnedBy }}</span>
+        </div>
+        <div class="info-box">
+          <span class="label">Inspected By</span>
+          <span class="value theme-cyan-text">{{ details.inspectedBy }}</span>
+        </div>
+        <div class="info-box">
+          <span class="label">Date Processed</span>
+          <span class="value">{{ details.createdAt | date:'medium' }}</span>
+        </div>
+        <div class="info-box">
+          <span class="label">Overall Condition</span>
+          <span class="badge" [attr.data-condition]="details.overallCondition || 'PENDING'">
+    {{ details.overallCondition ? details.overallCondition.replace('_', ' ') : 'Pending Inspection' }}
+          </span>
+        </div>
+      </div>
+
+      <h3 class="section-title">Inspected Components</h3>
+      <table class="glass-table detail-table">
+        <thead>
+          <tr>
+            <th>Component Name / ID</th>
+            <th class="text-center">Qty Returned</th>
+            <th style="width: 150px;">Condition</th>
+            <th>Inspection Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of details.items; track item.id) {
+            <tr>
+              <td class="font-bold">{{ item.componentId }}</td>
+              <td class="text-center font-mono">{{ item.quantityReturned }}</td>
+              <td>
+                <span class="badge" [attr.data-condition]="item.condition">
+                  {{ item.condition.replace('_', ' ') }}
+                </span>
+              </td>
+              <td class="text-muted" [class.text-danger]="item.damageRemarks">
+                {{ item.damageRemarks || 'No issues reported.' }}
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center dead-state">No components found in this return record.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (details.remarks) {
+        <div class="global-remarks glass-panel" style="margin-top: 2rem; background: rgba(0,0,0,0.15);">
+          <h4 class="subtitle theme-cyan-text" style="margin-bottom: 0.5rem;">Instructor's Summary Notes:</h4>
+          <p style="color: rgba(255,255,255,0.85); line-height: 1.5;">{{ details.remarks }}</p>
+        </div>
+      }
+
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">Loading transaction receipt details...</div>
+  }
+</div>

@@ -1,0 +1,25 @@
+@use '../../../../../styles/variable' as *;
+
+.details-card { padding: 2rem; }
+.meta-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem;
+  h3 { color: white; margin-bottom: 0.25rem; code { color: var(--primary-cyan); font-size: 1rem; } }
+  .subtitle { color: var(--text-secondary); font-size: 0.9rem; }
+}
+.large-badge { font-size: 0.9rem; padding: 0.4rem 1rem; }
+
+.detail-table { width: 100%; margin-bottom: 2rem; }
+.approval-input { width: 70px; padding: 0.4rem; border-radius: 6px; background: rgba(0,0,0,0.3); color: white; border: 1px solid var(--primary-blue); text-align: center; }
+
+.action-footer { display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; }
+.btn-reject { padding: 0.75rem 1.5rem; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.5); background: transparent; color: var(--danger); font-weight: 600; cursor: pointer; &:hover { background: rgba(239, 68, 68, 0.1); } }
+.btn-approve { padding: 0.75rem 1.5rem; border-radius: 8px; border: none; background: var(--success); color: white; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+
+// Badges (reuse from request list)
+.badge {
+  padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+  &[data-status="PENDING"] { background: rgba(234, 179, 8, 0.15); color: #f59e0b; }
+  &[data-status="APPROVED"] { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+  &[data-status="PARTIALLY_APPROVED"] { background: rgba(6, 182, 212, 0.15); color: var(--primary-cyan); }
+  &[data-status="REJECTED"] { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+}
+.text-center { text-align: center; }

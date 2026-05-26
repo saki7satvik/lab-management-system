@@ -1,0 +1,50 @@
+<div
+  class="sidebar"
+  [class.open]="isOpen"
+>
+
+  <button
+    class="close-btn"
+    (click)="onCloseClick()"
+  >
+    ✕
+  </button>
+
+  <div class="sidebar-brand">
+
+    <h3>
+      MakersSpace Lab
+    </h3>
+
+  </div>
+
+  <nav class="sidebar-nav">
+
+    @for(
+      item of menuItems;
+      track item.route
+    ) {
+
+      <a
+        [routerLink]="item.route"
+
+        routerLinkActive="active"
+      >
+
+        <span class="icon">
+
+          {{ item.icon }}
+
+        </span>
+
+        {{ item.label }}
+
+      </a>
+    }
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <app-profile-menu></app-profile-menu>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="page-container">
+  <app-page-header title="Add Laboratory Component" backRoute="/dashboard/inventory">
+
+  </app-page-header>
+
+  <div class="form-container glass-panel">
+    @if (errorMessage) {
+      <div class="error-toast">
+        <span>⚠️ {{ errorMessage }}</span>
+      </div>
+    }
+
+    <form [formGroup]="componentForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        
+        <div class="input-group">
+          <label>Component Name</label>
+          <input type="text" placeholder="e.g., Arduino Uno R3" formControlName="name" [class.invalid]="componentForm.get('name')?.touched && componentForm.get('name')?.invalid">
+          @if (componentForm.get('name')?.touched && componentForm.get('name')?.hasError('required')) {
+            <small class="error-text">Component name label identifier is required</small>
+          }
+        </div>
+
+        <div class="input-group">
+          <label>Total Initial Stock Quantity</label>
+          <input type="number" placeholder="0" min="0" formControlName="totalQuantity" [class.invalid]="componentForm.get('totalQuantity')?.touched && componentForm.get('totalQuantity')?.invalid">
+          @if (componentForm.get('totalQuantity')?.touched && componentForm.get('totalQuantity')?.invalid) {
+            <small class="error-text">Initial total stock must be 1 unit or greater</small>
+          }
+        </div>
+
+        <div class="input-group full-width">
+          <label>Detailed Item Specification Description</label>
+          <input type="text" placeholder="Provide micro-controller technical parameters or kit contents..." formControlName="description">
+        </div>
+
+        <div class="input-group full-width">
+          <label>Internal Inventory Management Comments</label>
+          <input type="text" placeholder="e.g., Donated by Department / Located in Shelf B4" formControlName="comments">
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="button" routerLink="/dashboard/inventory" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="componentForm.invalid || isLoading">
+          @if (isLoading) {
+            <span class="spinner-inline"></span> Creating Item...
+          } @else {
+            Register Inventory Item
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

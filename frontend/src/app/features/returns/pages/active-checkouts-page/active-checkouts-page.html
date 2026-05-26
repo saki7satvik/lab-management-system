@@ -1,0 +1,53 @@
+<div class="page-container">
+  <app-page-header title="Active Checkouts" backRoute="/dashboard/returns"></app-page-header>
+
+  <div class="control-filter-bar glass-panel">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="Search active checkouts by Request ID or Student ID..." 
+        [ngModel]="searchQuery$ | async" 
+        (ngModelChange)="searchQuery$.next($event)" />
+    </div>
+  </div>
+
+  @if (filteredCheckouts$ | async; as checkouts) {
+    <div class="table-container glass-panel">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Student ID</th>
+            <th>Checkout Date</th>
+            <th>Items Out</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (req of checkouts; track req.id) {
+            <tr>
+              <td><code>{{ req.id.substring(0, 8) }}...</code></td>
+              <td class="font-bold">{{ req.createdBy }}</td>
+              <td>{{ req.updatedAt | date:'shortDate' }}</td>
+              <td>{{ req.items.length }} components</td>
+              <td class="text-right">
+                <button [routerLink]="['/dashboard/returns/process', req.id]" class="btn-primary-action">
+                  Process Return
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center dead-state">
+                No active checkouts found. All hardware is currently returned.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">Loading active checkouts...</div>
+  }
+</div>

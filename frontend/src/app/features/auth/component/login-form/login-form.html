@@ -1,0 +1,84 @@
+<form
+  [formGroup]="loginForm"
+  (ngSubmit)="onLogin()"
+>
+
+  <div class="input-group">
+
+    <input
+      type="text"
+      placeholder="College ID"
+      formControlName="collegeId"
+    >
+
+    <span class="icon">👤</span>
+
+  </div>
+
+  @if(collegeId.touched && collegeId.invalid) {
+
+    <div class="error-text">
+
+      @if(collegeId.errors?.['required']) {
+        <small>College ID is required</small>
+      }
+
+      @if(collegeId.errors?.['minlength']) {
+        <small>Minimum 3 characters required</small>
+      }
+
+    </div>
+  }
+
+  <div class="input-group">
+
+    <input
+      type="password"
+      placeholder="Password"
+      formControlName="password"
+    >
+
+    <span class="icon">🔒</span>
+
+  </div>
+
+  @if(password.touched && password.invalid) {
+
+    <div class="error-text">
+
+      @if(password.errors?.['required']) {
+        <small>Password is required</small>
+      }
+
+      @if(password.errors?.['minlength']) {
+        <small>Minimum 6 characters required</small>
+      }
+
+    </div>
+  }
+
+  <button
+    type="submit"
+    class="login-btn"
+    [disabled]="loginForm.invalid || isLoading"
+  >
+
+    @if(isLoading) {
+      Logging in...
+    }
+
+    @else {
+      Login
+    }
+
+  </button>
+
+  @if(errorMessage) {
+  
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
+  
+  }
+
+</form>

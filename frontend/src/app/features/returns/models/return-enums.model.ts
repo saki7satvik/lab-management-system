@@ -1,0 +1,19 @@
+export enum ItemCondition {
+  GOOD = 'GOOD',
+  DAMAGED = 'DAMAGED',
+  LOST = 'LOST'
+}
+
+export enum OverallCondition {
+  INTACT = 'INTACT',
+  MINOR_DAMAGE = 'MINOR_DAMAGE',
+  MAJOR_DAMAGE = 'MAJOR_DAMAGE',
+  PARTIAL_LOSS = 'PARTIAL_LOSS',
+  TOTAL_LOSS = 'TOTAL_LOSS'
+}
+
+export enum ReturnStatus {
+  PENDING_INSPECTION = 'PENDING_INSPECTION',
+  PROCESSED = 'PROCESSED',
+  FINE_PENDING = 'FINE_PENDING'
+}

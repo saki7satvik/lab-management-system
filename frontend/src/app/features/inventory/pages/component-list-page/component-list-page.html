@@ -1,0 +1,66 @@
+<div class="page-container">
+  <app-page-header title="Laboratory Asset Inventory" backRoute="/dashboard/inventory">
+    <button routerLink="/dashboard/inventory/create" class="btn-primary-action">📦 Provision Component</button>
+  </app-page-header>
+
+  <div class="control-filter-bar glass-panel">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="Search assets by component title name or catalog description keywords..." 
+        [ngModel]="searchQuery$ | async" 
+        (ngModelChange)="searchQuery$.next($event)" />
+    </div>
+  </div>
+
+  @if (filteredComponents$ | async; as components) {
+    <div class="table-container glass-panel">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>Asset ID</th>
+            <th>Component Model</th>
+            <th>Technical Description</th>
+            <th class="text-center">Total Quantity</th>
+            <th class="text-center">Available Stock</th>
+            <th class="text-center">Stock Threshold Alert</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of components; track item.id) {
+            <tr>
+              <td><code>{{ item.id }}</code></td>
+              <td class="font-bold theme-cyan-text">{{ item.name }}</td>
+              <td class="desc-cell-truncate">{{ item.description || 'No system technical documentation logging.' }}</td>
+              <td class="text-center font-mono">{{ item.totalQuantity }}</td>
+              <td class="text-center">
+                <span class="stock-indicator-pill" 
+                  [class.indicator-red]="item.availableQuantity === 0"
+                  [class.indicator-yellow]="item.availableQuantity > 0 && item.availableQuantity <= 3"
+                  [class.indicator-green]="item.availableQuantity > 3">
+                  {{ item.availableQuantity }} Available
+                </span>
+              </td>
+              <td class="text-center">
+                @if (item.availableQuantity === 0) {
+                  <span class="indicator-tag tag-red">OUT OF STOCK</span>
+                } @else if (item.availableQuantity <= 3) {
+                  <span class="indicator-tag tag-yellow">CRITICAL SUPPLY LOW</span>
+                } @else {
+                  <span class="indicator-tag tag-green">STABLE SUPPLY</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="text-center dead-state">No laboratory hardware entries match current query strings.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">Querying live inventory registries...</div>
+  }
+</div>

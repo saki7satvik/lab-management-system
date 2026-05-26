@@ -1,0 +1,101 @@
+@import '../../../users/pages/user-list-page/user-list-page.scss';
+
+/* Info Grid Styling */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-box .label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.info-box .value {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* Hyperlink Styling */
+.link-cyan {
+  color: var(--primary-cyan);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+}
+
+/* Sub-titles */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* Margin/Spacing Utilities */
+.mt-1 { margin-top: 0.5rem; }
+.text-muted { color: rgba(255, 255, 255, 0.6); }
+.text-danger { color: #fca5a5; }
+
+/* ---------------------------------------------------
+   RETURN-SPECIFIC BADGE OVERRIDES
+   These add the colors for the Return statuses & conditions
+   extending the base .badge class imported above.
+----------------------------------------------------- */
+.badge {
+  /* Return Transaction Statuses */
+  &[data-status="PROCESSED"] { 
+    background: rgba(34, 197, 94, 0.15); 
+    color: var(--success); 
+  }
+  &[data-status="PENDING_INSPECTION"], &[data-status="PENDING"], &[data-status="INITIATED"] { 
+    background: rgba(234, 179, 8, 0.15); 
+    color: #fde047; /* Yellow */
+  }
+  &[data-status="FINE_PENDING"] { 
+    background: rgba(239, 68, 68, 0.15); 
+    color: var(--danger); 
+  }
+
+  /* Item & Overall Conditions */
+  &[data-condition="INTACT"], &[data-condition="EXCELLENT"] {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--success);
+  }
+  
+  &[data-condition="GOOD"], &[data-condition="FAIR"], &[data-condition="MINOR_DAMAGE"] {
+    background: rgba(234, 179, 8, 0.15);
+    color: #fde047; /* Yellow */
+  }
+  
+  &[data-condition="DAMAGED"], &[data-condition="MAJOR_DAMAGE"], &[data-condition="PARTIAL_LOSS"], &[data-condition="TOTAL_LOSS"], &[data-condition="LOST"] {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+  }
+}
+
+/* Extra utility for the specific 'FINE PENDING' standalone red tag */
+.tag-red {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}

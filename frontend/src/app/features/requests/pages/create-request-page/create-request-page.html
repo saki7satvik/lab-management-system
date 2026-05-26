@@ -1,0 +1,50 @@
+<div class="page-container">
+  <app-page-header title="Build Component Request" backRoute="/dashboard/requests"></app-page-header>
+
+  <div class="split-layout">
+    <div class="inventory-panel glass-panel">
+      <h3>Available Inventory</h3>
+      <input type="text" class="search-box" placeholder="Search components..." [(ngModel)]="searchQuery" (ngModelChange)="applySearch()">
+      
+      <div class="inventory-list">
+        @for (item of filteredInventory; track item.id) {
+          <div class="inventory-card">
+            <div class="info">
+              <span class="name">{{ item.name }}</span>
+              <span class="stock">{{ item.availableQuantity }} available</span>
+            </div>
+            <div class="actions">
+              <input type="number" #qty min="1" [max]="item.availableQuantity" placeholder="Qty">
+              <button class="btn-add" (click)="addToCart(item, qty)">Add</button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="cart-panel glass-panel">
+      <h3>Your Request Cart</h3>
+      @if (cart.length === 0) {
+        <p class="empty-state">No components added yet.</p>
+      } @else {
+        <table class="glass-table">
+          <thead><tr><th>Component</th><th>Qty</th><th></th></tr></thead>
+          <tbody>
+            @for (item of cart; track item.componentId; let i = $index) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td class="text-right"><button class="btn-remove" (click)="removeFromCart(i)">✕</button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="cart-footer">
+          <button class="btn-submit-cart" [disabled]="isSubmitting" (click)="submitRequest()">
+            {{ isSubmitting ? 'Submitting...' : 'Submit Request' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

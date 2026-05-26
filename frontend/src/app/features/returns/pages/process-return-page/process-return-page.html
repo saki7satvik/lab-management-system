@@ -1,0 +1,134 @@
+<div class="page-container">
+  <app-page-header title="Process Hardware Return" backRoute="/dashboard/returns/active"></app-page-header>
+
+  @if (requestMeta$ | async; as requestMeta) {
+    <div class="return-workspace-layout">
+      
+      <div class="workspace-main">
+        <h2 class="section-title">Components to Inspect</h2>
+        
+        <div class="component-cards-container">
+          @for (row of returnRows; track row.requestItemId) {
+            <div class="item-glass-card" [class.panel-invalid]="row.qtyReturned > row.checkedOutQty || row.qtyReturned < 0">
+              
+              <div class="item-card-header">
+                <div class="component-identity">
+                  <div class="icon-avatar-glow">🔌</div>
+                  <div>
+                    <h4>{{ row.componentName }}</h4>
+                    <p class="code-text">ID: <code>{{ row.requestItemId.substring(0,8) }}...</code></p>
+                  </div>
+                </div>
+                <div class="checkout-metric">
+                  <span class="metric-label">Checked Out</span>
+                  <span class="metric-value">{{ row.checkedOutQty }}</span>
+                </div>
+              </div>
+
+              <div class="item-card-fields">
+                <div class="form-field-group width-small">
+                  <label class="premium-field-label">Qty Returned</label>
+                  <div class="premium-input-container">
+                    <input 
+                      type="number" 
+                      class="approval-input modern-stepper-field" 
+                      [(ngModel)]="row.qtyReturned" 
+                      min="0" 
+                      [max]="row.checkedOutQty"
+                      [class.invalid-input]="row.qtyReturned > row.checkedOutQty || row.qtyReturned < 0"
+                    >
+                  </div>
+                </div>
+
+                <div class="form-field-group width-medium">
+                  <label class="premium-field-label">Condition Status</label>
+                  <div class="custom-select-container" [attr.data-condition-selected]="row.condition">
+                    <select class="condition-select premium-dropdown-field" [(ngModel)]="row.condition">
+                      @for (cond of conditions; track cond) {
+                        <option [value]="cond">{{ cond }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-field-group width-flex">
+                  <label class="premium-field-label">Inspection Remarks</label>
+                  <input 
+                    type="text" 
+                    class="remarks-input premium-text-field" 
+                    [(ngModel)]="row.damageRemarks"
+                    [disabled]="!requiresRemarks(row.condition)"
+                    [class.required-highlight]="requiresRemarks(row.condition) && !row.damageRemarks"
+                    [placeholder]="requiresRemarks(row.condition) ? '🚨 Explain damage/loss context...' : 'Component intact and functional'"
+                  >
+                </div>                
+
+
+                
+              </div>
+
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="workspace-sidebar">
+        <div class="sidebar-sticky-panel glass-panel">
+          <h3 class="panel-heading">Inspection Summary</h3>
+          
+          <div class="meta-summary-block">
+            <div class="meta-row">
+              <span class="meta-label">Request ID</span>
+              <span class="meta-val"><code>{{ requestMeta.id.substring(0,12) }}...</code></span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Issued To</span>
+              <span class="meta-val user-tag">👤 {{ requestMeta.createdBy }}</span>
+            </div>
+          </div>
+
+          <hr class="panel-divider">
+
+          <div class="global-notes-section">
+            <label class="premium-field-label">Overall Return Notes</label>
+            <textarea 
+              class="global-remarks-area premium-textarea-field" 
+              [(ngModel)]="globalRemarks" 
+              placeholder="Log transaction details, processing overrides, or student laboratory conduct remarks here..."
+              rows="4">
+            </textarea>
+          </div>
+
+          <div class="sidebar-action-footer">
+            <button 
+              class="btn-primary-action btn-block premium-gradient-btn" 
+              [disabled]="isSubmitting" 
+              (click)="submitReturn()"
+            >
+              @if (isSubmitting) {
+                <span class="loading-spinner-glow">⌛</span> Processing Return...
+              } @else {
+                💾 Complete & Log Return
+              }
+            </button>
+            
+            <button 
+              routerLink="/dashboard/returns/active" 
+              class="btn-action text-center btn-block-cancel premium-secondary-btn"
+              [disabled]="isSubmitting"
+            >
+              Cancel Inspection
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">
+      <div class="spinner-icon-glow">🌀</div>
+      <p>Synchronizing request checkout tokens from inventory servers...</p>
+    </div>
+  }
+</div>

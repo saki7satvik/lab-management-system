@@ -1,0 +1,77 @@
+<div class="page-container">
+  <app-page-header title="User Records Directory" backRoute="/dashboard/users">
+    <button routerLink="/dashboard/users/create" class="btn-primary-action">➕ Add User</button>
+  </app-page-header>
+
+  <div class="control-filter-bar glass-panel">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="Filter by name, college ID, or email context..." 
+        [ngModel]="searchQuery$ | async" 
+        (ngModelChange)="searchQuery$.next($event)" />
+    </div>
+
+    @if (currentUserRole !== 'STUDENT') {
+      <div class="dropdown-filters">
+        <select [ngModel]="selectedRole$ | async" (ngModelChange)="selectedRole$.next($event)">
+          <option value="">All Security Roles</option>
+          @if (currentUserRole === 'SUPER_ADMIN') {
+            <option value="SUPER_ADMIN">SUPER ADMIN</option>
+          }
+          @if (currentUserRole === 'SUPER_ADMIN' || currentUserRole === 'ADMIN') {
+            <option value="ADMIN">ADMIN</option>
+          }
+          <option value="INSTRUCTOR">INSTRUCTOR</option>
+          <option value="STUDENT">STUDENT</option>
+        </select>
+
+        <select [ngModel]="selectedStatus$ | async" (ngModelChange)="selectedStatus$.next($event)">
+          <option value="">All Account Statuses</option>
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="DEACTIVATED">DEACTIVATED</option>
+        </select>
+      </div>
+    }
+  </div>
+
+  @if (filteredUsers$ | async; as users) {
+    <div class="table-container glass-panel">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>College ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="text-right">Operational Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.collegeId) {
+            <tr [class.disabled-row]="user.status === 'DEACTIVATED'">
+              <td><code>{{ user.collegeId }}</code></td>
+              <td class="font-bold">{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td><span class="badge role-badge" [attr.data-role]="user.role">{{ user.role }}</span></td>
+              <td><span class="badge status-badge" [attr.data-status]="user.status">{{ user.status }}</span></td>
+              <td class="text-right actions-cell">
+                @if (user.status === 'ACTIVE') {
+                  <button class="btn-action btn-danger" (click)="onDeactivate(user.collegeId)">Deactivate</button>
+                } @else {
+                  <button class="btn-action btn-success" (click)="onReactivate(user.collegeId)">Reactivate</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="text-center dead-state">No user data matches defined criteria layers.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">Loading registry records...</div>
+  }
+</div>

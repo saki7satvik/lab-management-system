@@ -1,0 +1,24 @@
+<div class="page-container">
+  <app-page-header title="Inventory Dashboard"></app-page-header>
+  
+  <div class="feature-grid">
+    <app-feature-card 
+      title="View Directory" 
+      description="Browse and filter inventory items"
+      icon="👥"
+      link="/dashboard/inventory/list"
+      iconColor="var(--primary-blue)">
+    </app-feature-card>
+
+    @if (currentUserRole === 'INSTRUCTOR') {
+      <app-feature-card 
+        title="Provision Component" 
+        description="Register a new inventory component inside the laboratory."
+        icon="➕"
+        link="/dashboard/inventory/create"
+        iconColor="var(--primary-cyan)">
+      </app-feature-card>
+    }
+
+  </div>
+</div>

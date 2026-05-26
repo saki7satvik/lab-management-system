@@ -1,0 +1,79 @@
+<div class="page-container">
+  <app-page-header title="Hardware Return Directory"></app-page-header>
+
+  <div class="control-filter-bar glass-panel">
+    <div class="search-input-wrapper">
+      <span class="search-icon">🔍</span>
+      <input 
+        type="text" 
+        placeholder="Search by Return ID, Request ID, or Student ID..." 
+        [ngModel]="searchQuery$ | async" 
+        (ngModelChange)="searchQuery$.next($event)" />
+    </div>
+    
+    <div class="dropdown-filters">
+      <select [ngModel]="selectedStatus$ | async" (ngModelChange)="selectedStatus$.next($event)">
+        <option value="">All Statuses</option>
+        <option value="PROCESSED">PROCESSED</option>
+        <option value="FINE_PENDING">FINE PENDING</option>
+        <option value="PENDING_INSPECTION">PENDING INSPECTION</option>
+      </select>
+    </div>
+  </div>
+
+  @if (filteredReturns$ | async; as returns) {
+    <div class="table-container glass-panel">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>Return ID</th>
+            <th>Original Request ID</th>
+            <th>Date Returned</th>
+            @if (userRole !== 'STUDENT') { 
+              <th>Returned By</th> 
+            }
+            <th>Overall Condition</th>
+            <th>Status</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ret of returns; track ret.id) {
+            <tr>
+              <td><code>{{ ret.id.substring(0, 8) }}...</code></td>
+              <td><code>{{ ret.requestId.substring(0, 8) }}...</code></td>
+              <td>{{ ret.createdAt | date:'mediumDate' }}</td>
+              
+              @if (userRole !== 'STUDENT') { 
+                <td class="font-bold">{{ ret.returnedBy }}</td> 
+              }
+              
+              <td>
+                <span class="badge" [attr.data-condition]="ret.overallCondition">
+                  {{ ret.overallCondition ? ret.overallCondition.replace('_', ' ') : 'Pending Inspection' }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [attr.data-status]="ret.status">
+                  {{ ret.status ? ret.status.replace('_', ' ') : 'Initiated' }}
+                </span>
+              </td>
+              
+              <td class="text-right">
+                <button [routerLink]="[ret.id]" class="btn-action btn-outline">View Receipt</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="userRole !== 'STUDENT' ? 7 : 6" class="text-center dead-state">
+                No return records found matching your query criteria.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="state-panel glass-panel text-center">Loading return history...</div>
+  }
+</div>

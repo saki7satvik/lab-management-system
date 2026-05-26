@@ -1,0 +1,26 @@
+@use '../../../../../styles/variable' as *;
+
+/* Reuses control bar layouts from shared styles pattern variables */
+@import '../../../users/pages/user-list-page/user-list-page.scss'; 
+
+.theme-cyan-text { color: var(--primary-cyan) !important; }
+
+.desc-cell-truncate {
+  max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary);
+}
+
+/* STOCK MATRIX WORKFLOW PILLS & STATUS TAGS */
+.stock-indicator-pill {
+  display: inline-block; padding: 0.35rem 0.75rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; font-family: monospace;
+  
+  &.indicator-red { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+  &.indicator-yellow { background: rgba(234, 179, 8, 0.15); color: #f59e0b; border: 1px solid rgba(234,179,8,0.25); }
+  &.indicator-green { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.25); }
+}
+
+.indicator-tag {
+  font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; padding: 0.2rem 0.5rem; border-radius: 4px;
+  &.tag-red { color: var(--danger); }
+  &.tag-yellow { color: #f59e0b; }
+  &.tag-green { color: var(--success); }
+}
