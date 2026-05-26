@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="CreateUserTests" project="user_service" tests="15" started="15" failures="4" errors="3" ignored="0">
+  <testsuite name="com.user_service.UserServiceTest" time="2.426" displayname="UserServiceTest" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]">
+    <testsuite name="com.user_service.UserServiceTest$CreateUserTests" time="2.426" displayname="Create User Tests" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]">
+      <testsuite name="createUser_roleMatrix(com.user_service.UserServiceTest$CreateUserTests)" time="2.267" displayname="Should enforce role hierarchy rules" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]">
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="2.267" dynamicTest="true" displayname="[1] creatorRole=SUPER_ADMIN, targetRole=ADMIN, shouldPass=true" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#1]"/>
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.004" dynamicTest="true" displayname="[2] creatorRole=SUPER_ADMIN, targetRole=INSTRUCTOR, shouldPass=true" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#2]"/>
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.003" dynamicTest="true" displayname="[3] creatorRole=ADMIN, targetRole=INSTRUCTOR, shouldPass=true" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#3]"/>
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.029" dynamicTest="true" displayname="[4] creatorRole=ADMIN, targetRole=ADMIN, shouldPass=false" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#4]">
+          <error>org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+Unnecessary stubbings detected.
+Clean &amp; maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:144)
+  2. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:145)
+  3. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:146)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.&#13;
+	at org.mockito.junit.jupiter.MockitoExtension.lambda$afterEach$2(MockitoExtension.java:200)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:198)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)&#13;
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.01" dynamicTest="true" displayname="[5] creatorRole=INSTRUCTOR, targetRole=STUDENT, shouldPass=true" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#5]"/>
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.007" dynamicTest="true" displayname="[6] creatorRole=INSTRUCTOR, targetRole=ADMIN, shouldPass=false" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#6]">
+          <error>org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+Unnecessary stubbings detected.
+Clean &amp; maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:144)
+  2. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:145)
+  3. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:146)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.&#13;
+	at org.mockito.junit.jupiter.MockitoExtension.lambda$afterEach$2(MockitoExtension.java:200)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:198)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)&#13;
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+        <testcase name="createUser_roleMatrix" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.008" dynamicTest="true" displayname="[7] creatorRole=STUDENT, targetRole=STUDENT, shouldPass=false" parameters="com.user_service.enums.Role,com.user_service.enums.Role,boolean" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_roleMatrix(com.user_service.enums.Role, com.user_service.enums.Role, boolean)]/[test-template-invocation:#7]">
+          <error>org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+Unnecessary stubbings detected.
+Clean &amp; maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:144)
+  2. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:145)
+  3. -&gt; at com.user_service.UserServiceTest$CreateUserTests.createUser_roleMatrix(UserServiceTest.java:146)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.&#13;
+	at org.mockito.junit.jupiter.MockitoExtension.lambda$afterEach$2(MockitoExtension.java:200)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:198)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)&#13;
+	at java.base/java.util.stream.ReferencePipeline$Head.forEach(ReferencePipeline.java:762)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Spliterators$ArraySpliterator.forEachRemaining(Spliterators.java:1024)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+      </testsuite>
+      <testcase name="createUser_duplicateEmail" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.019" displayname="Should reject duplicate email" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[method:createUser_duplicateEmail()]">
+        <failure>
+          <expected>class com.user_service.exception.ConflictException</expected>
+          <actual>class com.user_service.exception.ResourceNotFoundException</actual>
+          org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: &lt;com.user_service.exception.ConflictException&gt; but was: &lt;com.user_service.exception.ResourceNotFoundException&gt;&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)&#13;
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.createUser_duplicateEmail(UserServiceTest.java:203)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: com.user_service.exception.ResourceNotFoundException: User not found&#13;
+	at com.user_service.service.impl.UserServiceImpl.lambda$0(UserServiceImpl.java:43)&#13;
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)&#13;
+	at com.user_service.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:43)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.lambda$8(UserServiceTest.java:204)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)&#13;
+	... 7 more&#13;
+&#13;
+
+        </failure>
+      </testcase>
+      <testcase name="createUser_nullCreator" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.004" displayname="Should fail when creator is null" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[method:createUser_nullCreator()]"/>
+      <testsuite name="createUser_creatorStatus(com.user_service.UserServiceTest$CreateUserTests)" time="0.008" displayname="Should allow only ACTIVE creator" parameters="com.user_service.enums.Status" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_creatorStatus(com.user_service.enums.Status)]">
+        <testcase name="createUser_creatorStatus" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.008" dynamicTest="true" displayname="[1] status=ACTIVE" parameters="com.user_service.enums.Status" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_creatorStatus(com.user_service.enums.Status)]/[test-template-invocation:#1]"/>
+        <testcase name="createUser_creatorStatus" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.008" dynamicTest="true" displayname="[2] status=INACTIVE" parameters="com.user_service.enums.Status" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_creatorStatus(com.user_service.enums.Status)]/[test-template-invocation:#2]">
+          <failure>
+            <expected>class com.user_service.exception.UnauthorizedException</expected>
+            <actual>class com.user_service.exception.ResourceNotFoundException</actual>
+            org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: &lt;com.user_service.exception.UnauthorizedException&gt; but was: &lt;com.user_service.exception.ResourceNotFoundException&gt;&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)&#13;
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.createUser_creatorStatus(UserServiceTest.java:127)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Iterator.forEachRemaining(Iterator.java:133)&#13;
+	at java.base/java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1939)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: com.user_service.exception.ResourceNotFoundException: User not found&#13;
+	at com.user_service.service.impl.UserServiceImpl.lambda$0(UserServiceImpl.java:43)&#13;
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)&#13;
+	at com.user_service.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:43)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.lambda$3(UserServiceTest.java:128)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)&#13;
+	... 40 more&#13;
+&#13;
+
+          </failure>
+        </testcase>
+        <testcase name="createUser_creatorStatus" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.005" dynamicTest="true" displayname="[3] status=SUSPENDED" parameters="com.user_service.enums.Status" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[test-template:createUser_creatorStatus(com.user_service.enums.Status)]/[test-template-invocation:#3]">
+          <failure>
+            <expected>class com.user_service.exception.UnauthorizedException</expected>
+            <actual>class com.user_service.exception.ResourceNotFoundException</actual>
+            org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: &lt;com.user_service.exception.UnauthorizedException&gt; but was: &lt;com.user_service.exception.ResourceNotFoundException&gt;&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)&#13;
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.createUser_creatorStatus(UserServiceTest.java:127)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.Iterator.forEachRemaining(Iterator.java:133)&#13;
+	at java.base/java.util.Spliterators$IteratorSpliterator.forEachRemaining(Spliterators.java:1939)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.stream.ReferencePipeline$7$1.accept(ReferencePipeline.java:276)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.stream.ReferencePipeline$3$1.accept(ReferencePipeline.java:197)&#13;
+	at java.base/java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1708)&#13;
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:509)&#13;
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:151)&#13;
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:174)&#13;
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)&#13;
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: com.user_service.exception.ResourceNotFoundException: User not found&#13;
+	at com.user_service.service.impl.UserServiceImpl.lambda$0(UserServiceImpl.java:43)&#13;
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)&#13;
+	at com.user_service.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:43)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.lambda$3(UserServiceTest.java:128)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)&#13;
+	... 40 more&#13;
+&#13;
+
+          </failure>
+        </testcase>
+      </testsuite>
+      <testcase name="createUser_duplicateCollegeId" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.006" displayname="Should reject duplicate collegeId" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[method:createUser_duplicateCollegeId()]">
+        <failure>
+          <expected>class com.user_service.exception.ConflictException</expected>
+          <actual>class com.user_service.exception.ResourceNotFoundException</actual>
+          org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: &lt;com.user_service.exception.ConflictException&gt; but was: &lt;com.user_service.exception.ResourceNotFoundException&gt;&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)&#13;
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.createUser_duplicateCollegeId(UserServiceTest.java:185)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: com.user_service.exception.ResourceNotFoundException: User not found&#13;
+	at com.user_service.service.impl.UserServiceImpl.lambda$0(UserServiceImpl.java:43)&#13;
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)&#13;
+	at com.user_service.service.impl.UserServiceImpl.createUser(UserServiceImpl.java:43)&#13;
+	at com.user_service.UserServiceTest$CreateUserTests.lambda$7(UserServiceTest.java:186)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)&#13;
+	... 7 more&#13;
+&#13;
+
+        </failure>
+      </testcase>
+      <testcase name="createUser_nullDTO" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.003" displayname="Should fail when DTO is null" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[method:createUser_nullDTO()]"/>
+      <testcase name="createUser_success" classname="com.user_service.UserServiceTest.CreateUserTests" time="0.016" displayname="Should create user when all the conditions are valid" uniqueid="[engine:junit-jupiter]/[class:com.user_service.UserServiceTest]/[nested-class:CreateUserTests]/[method:createUser_success()]"/>
+    </testsuite>
+  </testsuite>
+</testrun>

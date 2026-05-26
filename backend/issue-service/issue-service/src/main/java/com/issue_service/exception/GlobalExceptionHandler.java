@@ -1,0 +1,131 @@
+package com.issue_service.exception;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.bind.annotation.*;
+
+import com.issue_service.dto.ErrorResponse;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    // 🔴 400
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(
+            BadRequestException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
+    // 🔴 404
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(
+            ResourceNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
+
+    // 🔴 403
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(
+            UnauthorizedException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(ex, HttpStatus.FORBIDDEN, request);
+    }
+
+    // 🔴 409
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(
+            ConflictException ex,
+            HttpServletRequest request) {
+
+        return buildResponse(ex, HttpStatus.CONFLICT, request);
+    }
+    
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleServiceUnavailableException(
+            ServiceUnavailableException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "Service Unavailable",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(
+                error,
+                HttpStatus.SERVICE_UNAVAILABLE
+        );
+    }
+
+    // 🔴 Validation errors
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(
+            org.springframework.web.bind.MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
+
+        String message = ex.getBindingResult()
+                .getFieldError()
+                .getDefaultMessage();
+
+        return buildResponse(message, HttpStatus.BAD_REQUEST, request);
+    }
+    
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorizationDeniedException(
+            AuthorizationDeniedException ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Forbidden",
+                "Access denied",
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
+
+    // 🔴 Fallback (VERY IMPORTANT)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneral(
+            Exception ex,
+            HttpServletRequest request) {
+
+        return buildResponse("Internal server error",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                request);
+    }
+
+    // 🔧 Common builder
+    private ResponseEntity<ErrorResponse> buildResponse(
+            Exception ex,
+            HttpStatus status,
+            HttpServletRequest request) {
+    	ex.printStackTrace();
+        return buildResponse(ex.getMessage(), status, request);
+    }
+
+    private ResponseEntity<ErrorResponse> buildResponse(
+            String message,
+            HttpStatus status,
+            HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                request.getRequestURI()
+        );
+
+        return new ResponseEntity<>(error, status);
+    }
+}

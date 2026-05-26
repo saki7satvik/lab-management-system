@@ -1,0 +1,331 @@
+package com.return_service.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.return_service.config.SecurityConfig;
+import com.return_service.dto.CurrentUser;
+import com.return_service.dto.ProcessReturnItemDTO;
+import com.return_service.dto.ProcessReturnRequestDTO;
+import com.return_service.dto.ReturnResponseDTO;
+import com.return_service.enums.ItemCondition;
+import com.return_service.enums.Role;
+import com.return_service.enums.Status;
+import com.return_service.exception.ConflictException;
+import com.return_service.exception.GlobalExceptionHandler;
+import com.return_service.exception.ResourceNotFoundException;
+import com.return_service.exception.ServiceUnavailableException;
+import com.return_service.security.CustomAccessDeniedHandler;
+import com.return_service.security.CustomAuthenticationEntryPoint;
+import com.return_service.security.JwtFilter;
+import com.return_service.security.JwtUtil;
+import com.return_service.service.ReturnService;
+
+@WebMvcTest(ReturnController.class)
+@AutoConfigureMockMvc
+@Import({
+        SecurityConfig.class,
+        JwtFilter.class,
+        JwtUtil.class,
+        CustomAccessDeniedHandler.class,
+        CustomAuthenticationEntryPoint.class,
+        GlobalExceptionHandler.class
+})
+public class ReturnControllerTests {
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@MockitoBean
+	private ReturnService returnService;
+	
+	@MockitoBean
+	private JwtUtil jwtUtil;
+	
+	private UsernamePasswordAuthenticationToken mockAuth(
+	        Role role
+	) {
+
+	    CurrentUser currentUser =
+	            new CurrentUser(
+	                    "INS_001",
+	                    role,
+	                    Status.ACTIVE
+	            );
+
+	    return new UsernamePasswordAuthenticationToken(
+	            currentUser,
+	            null,
+	            List.of(
+	                    new SimpleGrantedAuthority(
+	                            "ROLE_" + role.name()
+	                    )
+	            )
+	    );
+	}
+	
+	private ProcessReturnRequestDTO validReturnRequest() {
+
+	    ProcessReturnItemDTO item =
+	            ProcessReturnItemDTO.builder()
+	                    .issueItemId("ITEM_1")
+	                    .quantityReturned(1)
+	                    .condition(ItemCondition.GOOD)
+	                    .build();
+
+	    return ProcessReturnRequestDTO.builder()
+	            .issueId("ISSUE_1")
+	            .remarks("Returned")
+	            .items(List.of(item))
+	            .build();
+	}
+	
+	private ReturnResponseDTO responseDTO() {
+
+	    return ReturnResponseDTO.builder()
+	            .id("RET_001")
+	            .issueId("ISSUE_1")
+	            .build();
+	}
+	
+	@Test
+	void processReturn_success() throws Exception {
+
+	    when(returnService.processReturn(any(), any()))
+	            .thenReturn(responseDTO());
+
+	    mockMvc.perform(
+	            post("/returns")
+	                    .with(authentication(
+	                            mockAuth(Role.INSTRUCTOR)
+	                    ))
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(
+	                            objectMapper.writeValueAsString(
+	                                    validReturnRequest()
+	                            )
+	                    )
+	    )
+	    .andExpect(status().isOk())
+	    .andExpect(
+	            jsonPath("$.returnId")
+	                    .value("RET_001")
+	    );
+
+	    verify(returnService)
+	            .processReturn(any(), any());
+	}
+	
+	@Test
+	void processReturn_studentForbidden() throws Exception {
+
+	    mockMvc.perform(
+	            post("/returns")
+	                    .with(authentication(
+	                            mockAuth(Role.STUDENT)
+	                    ))
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(
+	                            objectMapper.writeValueAsString(
+	                                    validReturnRequest()
+	                            )
+	                    )
+	    )
+	    .andExpect(status().isForbidden());
+
+	    verify(returnService, never())
+	            .processReturn(any(), any());
+	}
+	
+	@Test
+	void processReturn_validationFailure() throws Exception {
+
+	    ProcessReturnRequestDTO dto =
+	            ProcessReturnRequestDTO.builder()
+	                    .build();
+
+	    mockMvc.perform(
+	            post("/returns")
+	                    .with(authentication(
+	                            mockAuth(Role.INSTRUCTOR)
+	                    ))
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(
+	                            objectMapper.writeValueAsString(dto)
+	                    )
+	    )
+	    .andExpect(status().isBadRequest());
+
+	    verify(returnService, never())
+	            .processReturn(any(), any());
+	}
+	
+	@Test
+	void getReturnById_success() throws Exception {
+
+	    when(returnService.getReturnById(any(), any()))
+	            .thenReturn(responseDTO());
+
+	    mockMvc.perform(
+	            get("/returns/RET_001")
+	                    .with(authentication(
+	                            mockAuth(Role.STUDENT)
+	                    ))
+	    )
+	    .andExpect(status().isOk())
+	    .andExpect(
+	            jsonPath("$.id")
+	                    .value("RET_001")
+	    );
+
+	    verify(returnService)
+	            .getReturnById(any(), any());
+	}
+	
+	@Test
+	void getReturnById_unauthorized() throws Exception {
+
+	    mockMvc.perform(
+	            get("/returns/RET_001")
+	    )
+	    .andExpect(status().isUnauthorized());
+
+	    verify(returnService, never())
+	            .getReturnById(any(), any());
+	}
+	
+	@Test
+	void getReturns_success() throws Exception {
+
+	    when(returnService.getReturns(any()))
+	            .thenReturn(List.of(responseDTO()));
+
+	    mockMvc.perform(
+	            get("/returns")
+	                    .with(authentication(
+	                            mockAuth(Role.STUDENT)
+	                    ))
+	    )
+	    .andExpect(status().isOk());
+
+	    verify(returnService)
+	            .getReturns(any());
+	}
+	
+	@Test
+	void getReturnsByIssue_success() throws Exception {
+
+	    when(returnService.getReturnsByIssue(any(), any()))
+	            .thenReturn(List.of(responseDTO()));
+
+	    mockMvc.perform(
+	            get("/returns/issue/ISSUE_1")
+	                    .with(authentication(
+	                            mockAuth(Role.INSTRUCTOR)
+	                    ))
+	    )
+	    .andExpect(status().isOk());
+
+	    verify(returnService)
+	            .getReturnsByIssue(any(), any());
+	}
+	
+	@Test
+	void getReturnById_notFound() throws Exception {
+
+	    when(returnService.getReturnById(any(), any()))
+	            .thenThrow(
+	                    new ResourceNotFoundException(
+	                            "Return not found"
+	                    )
+	            );
+
+	    mockMvc.perform(
+	            get("/returns/RET_001")
+	                    .with(authentication(
+	                            mockAuth(Role.STUDENT)
+	                    ))
+	    )
+	    .andExpect(status().isNotFound())
+	    .andExpect(
+	            jsonPath("$.message")
+	                    .value("Return not found")
+	    );
+	}
+	
+	@Test
+	void processReturn_conflict() throws Exception {
+
+	    when(returnService.processReturn(any(), any()))
+	            .thenThrow(
+	                    new ConflictException(
+	                            "Return exceeds issued quantity for item"
+	                    )
+	            );
+
+	    mockMvc.perform(
+	            post("/returns")
+	                    .with(authentication(
+	                            mockAuth(Role.INSTRUCTOR)
+	                    ))
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(
+	                            objectMapper.writeValueAsString(
+	                                    validReturnRequest()
+	                            )
+	                    )
+	    )
+	    .andExpect(status().isConflict());
+	}
+	
+	@Test
+	void processReturn_serviceUnavailable() throws Exception {
+
+	    when(returnService.processReturn(any(), any()))
+	            .thenThrow(
+	                    new ServiceUnavailableException(
+	                            "Inventory service unavailable"
+	                    )
+	            );
+
+	    mockMvc.perform(
+	            post("/returns")
+	                    .with(authentication(
+	                            mockAuth(Role.INSTRUCTOR)
+	                    ))
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(
+	                            objectMapper.writeValueAsString(
+	                                    validReturnRequest()
+	                            )
+	                    )
+	    )
+	    .andExpect(status().isServiceUnavailable());
+	}
+
+}

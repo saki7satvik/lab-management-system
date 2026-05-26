@@ -1,0 +1,36 @@
+package com.return_service.service;
+
+import com.return_service.dto.*;
+
+import java.util.List;
+
+public interface ReturnService {
+
+    // 🔥 Process return for approved request
+    ReturnResponseDTO processReturn(
+            ProcessReturnRequestDTO request,
+            CurrentUser currentUser
+    );
+
+    // 📄 Fetch single return
+    ReturnResponseDTO getReturnById(
+            String returnId,
+            CurrentUser currentUser
+    );
+
+    // 📄 Get returns associated with a request
+    List<ReturnResponseDTO> getReturnsByRequest(
+            String requestId,
+            CurrentUser currentUser
+    );
+
+    // 📄 Get all returns (Instructor/Admin)
+    List<ReturnResponseDTO> getReturns(
+            CurrentUser currentUser
+    );
+
+    // 📄 Student returns only
+    List<ReturnResponseDTO> getMyReturns(
+            CurrentUser currentUser
+    );
+}

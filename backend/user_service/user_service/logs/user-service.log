@@ -1,0 +1,116 @@
+2026-05-22 10:54:39 [INFO] c.u.UserServiceApplication - Starting UserServiceApplication using Java 21.0.10 with PID 30716 (C:\Users\lenovo\Desktop\Presidency\CapG\Project Microservices\user_service\user_service\target\classes started by lenovo in C:\Users\lenovo\Desktop\Presidency\CapG\Project Microservices\user_service\user_service)
+2026-05-22 10:54:39 [DEBUG] c.u.UserServiceApplication - Running with Spring Boot v3.5.13, Spring v6.2.17
+2026-05-22 10:54:39 [INFO] c.u.UserServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-22 10:54:44 [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-22 10:54:44 [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 640 ms. Found 1 JPA repository interface.
+2026-05-22 10:54:46 [INFO] o.s.cloud.context.scope.GenericScope - BeanFactory id=c6486bb3-8fa7-3b6e-a420-f6cccea59f4c
+2026-05-22 10:54:48 [INFO] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-05-22 10:54:48 [INFO] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-22 10:54:48 [INFO] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.53]
+2026-05-22 10:54:48 [INFO] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-22 10:54:48 [INFO] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 9136 ms
+2026-05-22 10:54:49 [INFO] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-22 10:54:49 [INFO] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.45.Final
+2026-05-22 10:54:50 [INFO] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-22 10:54:50 [INFO] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-22 10:54:50 [INFO] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-22 10:54:51 [INFO] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4a36a35d
+2026-05-22 10:54:51 [INFO] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-22 10:54:51 [WARN] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-22 10:54:51 [INFO] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-22 10:54:53 [INFO] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-22 10:54:53 [INFO] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-22 10:54:56 [WARN] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-22 10:54:58 [INFO] o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2026-05-22 10:54:58 [WARN] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: cb2d8fc9-c64c-45b2-a31c-f97856ad5722
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-05-22 10:54:58 [INFO] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-05-22 10:54:59 [INFO] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-05-22 10:54:59 [WARN] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-22 10:55:00 [INFO] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-05-22 10:55:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-05-22 10:55:00 [INFO] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1779427500911 with initial instances count: 3
+2026-05-22 10:55:00 [INFO] o.s.c.n.e.s.EurekaServiceRegistry - Registering application USER-SERVICE with eureka with status UP
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1779427500923, current=UP, previous=STARTING]
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USER-SERVICE/satvikkr:user-service:8081: registering service...
+2026-05-22 10:55:00 [INFO] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
+2026-05-22 10:55:00 [INFO] o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8081
+2026-05-22 10:55:00 [INFO] c.netflix.discovery.DiscoveryClient - DiscoveryClient_USER-SERVICE/satvikkr:user-service:8081 - registration status: 204
+2026-05-22 10:55:00 [INFO] c.u.UserServiceApplication - Started UserServiceApplication in 23.573 seconds (process running for 25.672)
+2026-05-22 11:00:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:01:57 [INFO] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-22 11:01:57 [INFO] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-22 11:01:57 [INFO] o.s.web.servlet.DispatcherServlet - Completed initialization in 231 ms
+2026-05-22 11:02:31 [ERROR] c.user_service.aop.ExceptionAspect - ❌ Exception in ResponseEntity com.user_service.auth.AuthController.login(LoginRequestDTO) | Message: Invalid credentials
+2026-05-22 11:03:19 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:03:19 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 181 ms
+2026-05-22 11:03:19 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:03:30 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.user_service.controller.UserController.reactivateUser(String,Authentication)
+2026-05-22 11:03:30 [INFO] c.user_service.aop.PerformanceAspect - ⏱ UserResponseDTO com.user_service.service.impl.UserServiceImpl.reactivateUser(String,String) executed in 335 ms
+2026-05-22 11:03:30 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: UserResponseDTO com.user_service.service.impl.UserServiceImpl.reactivateUser(String,String)
+2026-05-22 11:03:30 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:03:30 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 18 ms
+2026-05-22 11:03:30 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:03:34 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: String com.user_service.controller.UserController.deactivateUser(String,Authentication)
+2026-05-22 11:03:34 [INFO] c.user_service.aop.PerformanceAspect - ⏱ UserResponseDTO com.user_service.service.impl.UserServiceImpl.deactivateUser(String,String) executed in 37 ms
+2026-05-22 11:03:34 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: UserResponseDTO com.user_service.service.impl.UserServiceImpl.deactivateUser(String,String)
+2026-05-22 11:03:58 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:03:58 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 164 ms
+2026-05-22 11:03:58 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:04:04 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.user_service.controller.UserController.reactivateUser(String,Authentication)
+2026-05-22 11:04:04 [INFO] c.user_service.aop.PerformanceAspect - ⏱ UserResponseDTO com.user_service.service.impl.UserServiceImpl.reactivateUser(String,String) executed in 89 ms
+2026-05-22 11:04:04 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: UserResponseDTO com.user_service.service.impl.UserServiceImpl.reactivateUser(String,String)
+2026-05-22 11:04:04 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:04:04 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 24 ms
+2026-05-22 11:04:04 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:04:10 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: String com.user_service.controller.UserController.deactivateUser(String,Authentication)
+2026-05-22 11:04:10 [INFO] c.user_service.aop.PerformanceAspect - ⏱ UserResponseDTO com.user_service.service.impl.UserServiceImpl.deactivateUser(String,String) executed in 49 ms
+2026-05-22 11:04:10 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: UserResponseDTO com.user_service.service.impl.UserServiceImpl.deactivateUser(String,String)
+2026-05-22 11:04:17 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:04:17 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 19 ms
+2026-05-22 11:04:17 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:05:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:10:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:10:46 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:10:46 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 104 ms
+2026-05-22 11:10:46 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:11:12 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.user_service.controller.UserController.reactivateUser(String,Authentication)
+2026-05-22 11:11:13 [INFO] c.user_service.aop.PerformanceAspect - ⏱ UserResponseDTO com.user_service.service.impl.UserServiceImpl.reactivateUser(String,String) executed in 65 ms
+2026-05-22 11:11:13 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: UserResponseDTO com.user_service.service.impl.UserServiceImpl.reactivateUser(String,String)
+2026-05-22 11:11:13 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:11:13 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 17 ms
+2026-05-22 11:11:13 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:12:15 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: UserResponseDTO com.user_service.controller.UserController.createUser(CreateUserDTO,Authentication)
+2026-05-22 11:12:15 [INFO] c.user_service.aop.PerformanceAspect - ⏱ UserResponseDTO com.user_service.service.impl.UserServiceImpl.createUser(CreateUserDTO,String) executed in 201 ms
+2026-05-22 11:12:15 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: UserResponseDTO com.user_service.service.impl.UserServiceImpl.createUser(CreateUserDTO,String)
+2026-05-22 11:12:16 [INFO] com.user_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: List com.user_service.controller.UserController.getAllUsers(Authentication)
+2026-05-22 11:12:16 [INFO] c.user_service.aop.PerformanceAspect - ⏱ List com.user_service.service.impl.UserServiceImpl.getAllUsers(String) executed in 20 ms
+2026-05-22 11:12:16 [INFO] com.user_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.user_service.service.impl.UserServiceImpl.getAllUsers(String)
+2026-05-22 11:15:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:20:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:25:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:30:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:35:00 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 12:35:07 [WARN] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=57m15s367ms848µs500ns).

@@ -1,0 +1,15 @@
+package com.request_service.service;
+
+public interface RequestService {
+	RequestResponseDTO createRequest(CreateRequestDTO dto, String userId);
+	
+	RequestResponseDTO getRequestById(String requestId);
+	
+	List<RequestResponseDTO> getRequestsByUser(String userId);
+	
+	List<RequestResponseDTO> getAllRequests();
+	
+	RequestResponseDTO approveRequest(String requestId, ApproveRequestDTO dto);
+	
+	RequestResponseDTO rejectRequest(String requestId);
+}

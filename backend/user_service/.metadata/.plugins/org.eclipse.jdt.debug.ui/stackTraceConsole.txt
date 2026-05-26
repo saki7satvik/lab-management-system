@@ -1,0 +1,6 @@
+com.user_service.exception.ResourceNotFoundException: User not found
+	at com.user_service.controller.UserControllerTest.deactivateUser_success(UserControllerTest.java:143)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+

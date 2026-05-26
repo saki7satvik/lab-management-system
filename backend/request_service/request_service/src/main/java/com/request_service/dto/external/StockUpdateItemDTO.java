@@ -1,0 +1,18 @@
+package com.request_service.dto.external;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter @Getter
+@AllArgsConstructor
+public class StockUpdateItemDTO {
+
+    @NotNull
+    private String componentId;
+
+    @Min(1)
+    private int quantity;
+}

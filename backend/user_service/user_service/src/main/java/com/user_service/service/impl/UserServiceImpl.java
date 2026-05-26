@@ -1,0 +1,237 @@
+package com.user_service.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.dto.UserResponseDTO;
+import com.user_service.entity.User;
+import com.user_service.enums.Role;
+import com.user_service.enums.Status;
+import com.user_service.exception.ConflictException;
+import com.user_service.exception.ResourceNotFoundException;
+import com.user_service.exception.UnauthorizedException;
+import com.user_service.repository.UserRepository;
+import com.user_service.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Service
+public class UserServiceImpl implements UserService{
+	
+	private final UserRepository userRepository;
+
+	private final PasswordEncoder passwordEncoder;
+	
+	// =============== Create User ===============
+
+	@Override
+	public UserResponseDTO createUser(CreateUserDTO dto, String currentUserCollegeId) {
+		
+		if(dto == null) {
+			throw new NullPointerException("DTO cannot be null");
+		}
+		
+		if(currentUserCollegeId == null) {
+			throw new NullPointerException("Current User cannot be null");
+		}
+		
+	    User creator = userRepository.findByCollegeId(currentUserCollegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+	    // 🔒 1. Creator must be ACTIVE
+	    if (creator.getStatus() != Status.ACTIVE) {
+	        throw new UnauthorizedException("Inactive user cannot create users");
+	    }
+
+	    // 🔒 2. Role hierarchy check
+	    if (creator.getRole().ordinal() >= dto.getRole().ordinal()) {
+	        throw new UnauthorizedException("Insufficient privileges to create this role");
+	    }
+
+	    // 🔒 3. Prevent duplicates
+	    if (userRepository.existsByCollegeId(dto.getCollegeId())) {
+	        throw new ConflictException("User with this collegeId already exists");
+	    }
+
+	    if (userRepository.existsByEmail(dto.getEmail())) {
+	        throw new ConflictException("User with this email already exists");
+	    }
+
+	    // 🔒 4. Create user
+	    User user = new User();
+	    user.setCollegeId(dto.getCollegeId());
+	    user.setName(dto.getName());
+	    user.setEmail(dto.getEmail());
+	    user.setPhone(dto.getPhone());
+	    user.setRole(dto.getRole());
+	    user.setStatus(Status.ACTIVE);
+
+	    // 🔐 Default password
+	    user.setPassword(passwordEncoder.encode("welcome@123"));
+
+	    userRepository.save(user);
+
+	    return mapToDTO(user);
+	}
+	
+	// =============== GET METHODS ===============
+	
+	@Override
+	public List<UserResponseDTO> getAllUsers(String currentUserCollegeId) {
+
+	    User currentUser = userRepository.findByCollegeId(currentUserCollegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+	    // 🔒 Current user must be ACTIVE to make any requests
+	    if (currentUser.getStatus() != Status.ACTIVE) {
+	        throw new UnauthorizedException("Inactive user cannot access data");
+	    }
+
+	    return userRepository.findAll().stream()
+	            // 👇 If the current user is a STUDENT, they only see ACTIVE users. 
+	            // Otherwise, let all statuses pass through to the UI.
+	            .filter(user -> currentUser.getRole() != Role.STUDENT || user.getStatus() == Status.ACTIVE)
+	            
+	            // Apply your hierarchical role access logic
+	            .filter(user -> canAccess(currentUser.getRole(), user.getRole()))
+	            .map(this::mapToDTO)
+	            .toList();
+	}
+
+	@Override
+	public UserResponseDTO getUserByCollegeId(String targetCollegeId, String currentUserCollegeId) {
+
+	    // 🔍 Fetch current user
+	    User currentUser = userRepository.findByCollegeId(currentUserCollegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
+
+	    // 🔒 Current user must be ACTIVE
+	    if (currentUser.getStatus() != Status.ACTIVE) {
+	        throw new UnauthorizedException("Inactive user cannot access data");
+	    }
+
+	    // 🔍 Fetch target user
+	    User targetUser = userRepository.findByCollegeId(targetCollegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+	    // 🔒 Target must be ACTIVE (treat inactive as hidden)
+	    if (targetUser.getStatus() != Status.ACTIVE) {
+	        throw new ResourceNotFoundException("User not found");
+	    }
+
+	    // 🔐 Role-based access control
+	    if (!canAccess(currentUser.getRole(), targetUser.getRole())) {
+	        throw new UnauthorizedException("Access denied");
+	    }
+
+	    return mapToDTO(targetUser);
+	}
+	
+	// =============== UPDATE METHOD ===============
+	
+	@Override
+	public UserResponseDTO deactivateUser(String targetCollegeId, String currentUserCollegeId) {
+
+	    User currentUser = validateActiveUser(currentUserCollegeId);
+
+	    User targetUser = userRepository.findByCollegeId(targetCollegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Target user not found"));
+
+	    validateModification(currentUser, targetUser);
+
+	    // ❌ Already inactive
+	    if (targetUser.getStatus() != Status.ACTIVE) {
+	        throw new ConflictException("User is already inactive");
+	    }
+
+	    targetUser.setStatus(Status.INACTIVE);
+	    userRepository.save(targetUser);
+
+	    return mapToDTO(targetUser);
+	}
+	
+	@Override
+	public UserResponseDTO reactivateUser(String targetCollegeId, String currentUserCollegeId) {
+
+	    User currentUser = validateActiveUser(currentUserCollegeId);
+
+	    User targetUser = userRepository.findByCollegeId(targetCollegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Target user not found"));
+
+	    validateModification(currentUser, targetUser);
+
+	    // ❌ Already active
+	    if (targetUser.getStatus() != Status.INACTIVE) {
+	        throw new ConflictException("User is already active");
+	    }
+
+	    targetUser.setStatus(Status.ACTIVE);
+	    userRepository.save(targetUser);
+
+	    return mapToDTO(targetUser);
+	}
+	
+	// ========== HELPER METHODS ==========
+	
+	private UserResponseDTO mapToDTO(User user) {
+		
+		if (user == null) return null;
+
+	    return UserResponseDTO.builder()
+	            .name(user.getName())
+	            .collegeId(user.getCollegeId())
+	            .email(user.getEmail())
+	            .phone(user.getPhone())
+	            .role(user.getRole())
+	            .status(user.getStatus())
+	            .build();
+	}
+	
+	private boolean canAccess(Role current, Role target) {
+	    return current.ordinal() <= target.ordinal();
+	}
+	
+	private User validateActiveUser(String collegeId) {
+	    User user = userRepository.findByCollegeId(collegeId)
+	            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+	    if (user.getStatus() != Status.ACTIVE) {
+	        throw new UnauthorizedException("Inactive user cannot perform this action");
+	    }
+
+	    return user;
+	}
+	
+	private void validateModification(User currentUser, User targetUser) {
+
+	    // ❌ Cannot act on self
+	    if (currentUser.getCollegeId().equals(targetUser.getCollegeId())) {
+	        throw new ConflictException("Cannot modify yourself");
+	    }
+
+	    // ❌ Cannot modify SUPER_ADMIN
+	    if (targetUser.getRole() == Role.SUPER_ADMIN) {
+	        throw new ConflictException("Cannot modify SUPER_ADMIN");
+	    }
+
+	    // 🔐 Role hierarchy
+	    if (!canModify(currentUser.getRole(), targetUser.getRole())) {
+	        throw new UnauthorizedException("Insufficient privileges");
+	    }
+	}
+	
+	private boolean canModify(Role current, Role target) {
+	    return current.ordinal() < target.ordinal();
+	}
+
+	
+
+
+
+	
+
+}

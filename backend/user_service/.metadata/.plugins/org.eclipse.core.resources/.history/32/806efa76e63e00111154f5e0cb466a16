@@ -1,0 +1,96 @@
+package com.user_service.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.dto.UserResponseDTO;
+import com.user_service.entity.User;
+import com.user_service.enums.Role;
+import com.user_service.enums.Status;
+import com.user_service.repository.UserRepository;
+import com.user_service.service.UserService;
+
+public class UserServiceImpl implements UserService{
+	@Autowired
+	UserRepository userRepository;
+	
+	private UserResponseDTO mapToDto(User user) {
+
+	    return UserResponseDTO.builder()
+	            .id(user.getId())
+	            .name(user.getName())
+	            .role(user.getRole())
+	            .status(user.getStatus())
+	            .build();
+	}
+
+	@Override
+	public UserResponseDTO createUser(CreateUserDTO dto, String currentUserId) {
+		// TODO Auto-generated method stub
+		User currentUser = userRepository.findById(currentUserId)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    // 🔐 Role validation
+	    if(dto.getRole() == Role.ADMIN && currentUser.getRole() != Role.SUPER_ADMIN) {
+	        throw new RuntimeException("Only SUPER_ADMIN can create ADMIN");
+	    }
+
+	    if(currentUser.getRole() == Role.ADMIN &&
+	            (dto.getRole() == Role.ADMIN || dto.getRole() == Role.SUPER_ADMIN)) {
+	        throw new RuntimeException("Admin cannot create higher roles");
+	    }
+	    
+	    User user = new User();
+	    user.setName(dto.getName());
+	    user.setRole(dto.getRole());
+	    user.setStatus(Status.ACTIVE);
+
+	    userRepository.save(user);
+		return mapToDto(user);
+	}
+
+	@Override
+	public List<UserResponseDTO> getAllUsers() {
+		// TODO Auto-generated method stub
+		
+		List<User> list = userRepository.findAll();
+		
+		List<UserResponseDTO> response = new ArrayList<>();
+		
+		for(User user: list) {
+			response.add(mapToDto(user));
+		}
+		
+		return response;
+	}
+
+	@Override
+	public UserResponseDTO getUserById(String id) {
+		// TODO Auto-generated method stub
+		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User doesnt exist"));
+		return mapToDto(user);
+	}
+
+	@Override
+	public UserResponseDTO deactivateUser(String id, String currentUserId) {
+		// TODO Auto-generated method stub
+		User currentUser = userRepository.findById(currentUserId).orElseThrow(() -> new RuntimeException("User doesnt exist"));
+		User targetUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User doesnt exist"));
+		
+		if(currentUser.getRole() == Role.INSTRUCTOR || currentUser.getRole() == Role.STUDENT) {
+			throw new RuntimeException("Instructor and Student cannot deactivate other Accounts");
+		}
+		
+		if(currentUser.getRole() == Role.ADMIN &&
+				targetUser.getRole() == Role.ADMIN) {
+			throw new RuntimeException("Admin cannot deactivate another Admin");
+		}
+		
+		targetUser.setStatus(Status.INACTIVE);
+		return mapToDto(targetUser);
+	}
+
+}

@@ -1,0 +1,5 @@
+package com.return_service.dto.external;
+
+public class RequestItemResponseDTO {
+
+}

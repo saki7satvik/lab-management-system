@@ -1,0 +1,42 @@
+package com.issue_service.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "issue_items")
+@Setter @Getter
+@Builder
+public class IssueItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    // 🔗 Many items → one issue
+    @ManyToOne
+    @JoinColumn(name = "issue_id", nullable = false)
+    private Issue issue;
+
+    // 🔗 Reference to RequestItem (NO JPA relation)
+    @Column(nullable = false)
+    private String requestItemId;
+
+    // 🔗 Reference to Component (NO JPA relation)
+    @Column(nullable = false)
+    private String componentId;
+
+    @Column(nullable = false)
+    private int quantityIssued;
+
+    // getters, setters
+}

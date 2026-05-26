@@ -1,0 +1,24 @@
+package com.request_service.service;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.request_service.dto.response.CurrentUser;
+import com.request_service.repository.RequestRepository;
+import com.request_service.service.impl.RequestServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class CreateRequestTest {
+	@Mock
+    private RequestRepository requestRepository;
+
+    @Mock
+    private InventoryClient inventoryClient;
+
+    @InjectMocks
+    private RequestServiceImpl requestService;
+
+    private CurrentUser studentUser;
+}

@@ -1,0 +1,169 @@
+package com.request_service.controller;
+
+import com.request_service.dto.request.ApproveRequestDTO;
+import com.request_service.dto.request.CreateRequestDTO;
+import com.request_service.dto.response.CurrentUser;
+import com.request_service.dto.response.RequestResponseDTO;
+import com.request_service.service.RequestService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/requests")
+@RequiredArgsConstructor
+@Tag(name = "Request Controller", description = "APIs for managing component requests")
+public class RequestController {
+
+    private final RequestService requestService;
+
+    // ================= CREATE =================
+    @Operation(summary = "Create a new request")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Request created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid request data"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "Component not found"),
+        @ApiResponse(responseCode = "409", description = "Invalid request (duplicate or invalid state)")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR','STUDENT')")
+    @PostMapping
+    public ResponseEntity<RequestResponseDTO> createRequest(
+            @Valid @RequestBody CreateRequestDTO dto,
+            Authentication authentication
+    ) {
+    	CurrentUser currentUser =
+    		    (CurrentUser) authentication.getPrincipal();
+        return ResponseEntity.ok(
+                requestService.createRequest(dto, currentUser)
+        );
+    }
+
+    // ================= GET BY ID =================
+    @Operation(summary = "Get request by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Request found"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "Request not found")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR','STUDENT')")
+    @GetMapping("/{id}")
+    public ResponseEntity<RequestResponseDTO> getRequestById(
+            @PathVariable String id,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                requestService.getRequestById(id, authentication.getName())
+        );
+    }
+
+    // ================= GET MY REQUESTS =================
+    @Operation(summary = "Get requests created by current user")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Requests fetched successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR','STUDENT')")
+    @GetMapping("/user")
+    public ResponseEntity<List<RequestResponseDTO>> getMyRequests(
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                requestService.getRequestsByUser(
+                        authentication.getName(),
+                        authentication.getName()
+                )
+        );
+    }
+
+    // ================= GET USER REQUESTS =================
+    @Operation(summary = "Get requests by a specific user (Admin/Instructor only)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Requests fetched successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR')")
+    @GetMapping("/user/{collegeId}")
+    public ResponseEntity<List<RequestResponseDTO>> getRequestsByUser(
+            @PathVariable String collegeId,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                requestService.getRequestsByUser(
+                        collegeId,
+                        authentication.getName()
+                )
+        );
+    }
+
+    // ================= GET ALL =================
+    @Operation(summary = "Get all requests (Admin/Instructor only)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "All requests fetched successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','INSTRUCTOR')")
+    @GetMapping
+    public ResponseEntity<List<RequestResponseDTO>> getAllRequests(
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                requestService.getAllRequests(authentication.getName())
+        );
+    }
+
+    // ================= APPROVE =================
+    @Operation(summary = "Approve a request (Instructor only)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Request approved successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid approval data"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "Request not found"),
+        @ApiResponse(responseCode = "409", description = "Request already processed or invalid state")
+    })
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PutMapping("/{requestId}/approve")
+    public ResponseEntity<RequestResponseDTO> approveRequest(
+            @PathVariable String requestId,
+            @Valid @RequestBody ApproveRequestDTO dto,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                requestService.approveRequest(
+                        requestId,
+                        dto,
+                        authentication.getName()
+                )
+        );
+    }
+
+    // ================= REJECT =================
+    @Operation(summary = "Reject a request (Instructor only)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Request rejected successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "Request not found"),
+        @ApiResponse(responseCode = "409", description = "Request already processed")
+    })
+    @PreAuthorize("hasRole('INSTRUCTOR')")
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<RequestResponseDTO> rejectRequest(
+            @PathVariable String id,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                requestService.rejectRequest(id, authentication.getName())
+        );
+    }
+}

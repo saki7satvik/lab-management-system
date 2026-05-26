@@ -1,0 +1,5 @@
+package com.inventory_service.security;
+
+public class CustomAuthenticationEntryPointTest {
+
+}

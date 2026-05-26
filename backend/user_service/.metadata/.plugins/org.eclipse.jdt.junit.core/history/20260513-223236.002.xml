@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="UserControllerTest" project="user_service" tests="10" started="10" failures="3" errors="1" ignored="0">
+  <testsuite name="com.user_service.controller.UserControllerTest" time="1.022" displayname="UserControllerTest" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]">
+    <testcase name="reactivateUser_success" classname="com.user_service.controller.UserControllerTest" time="0.485" displayname="reactivateUser_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:reactivateUser_success()]"/>
+    <testcase name="createUser_invalidDTO" classname="com.user_service.controller.UserControllerTest" time="0.306" displayname="createUser_invalidDTO()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:createUser_invalidDTO()]"/>
+    <testcase name="reactivateUser_forbidden" classname="com.user_service.controller.UserControllerTest" time="0.065" displayname="reactivateUser_forbidden()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:reactivateUser_forbidden()]">
+      <failure>org.mockito.exceptions.verification.NeverWantedButInvoked: 
+userService.reactivateUser(&lt;any&gt;, &lt;any&gt;);
+Never wanted here:
+-&gt; at com.user_service.controller.UserControllerTest.reactivateUser_forbidden(UserControllerTest.java:201)
+But invoked here:
+-&gt; at com.user_service.controller.UserController.reactivateUser(UserController.java:113) with arguments: [STU_101, ADMIN_001]
+&#13;
+	at com.user_service.controller.UserControllerTest.reactivateUser_forbidden(UserControllerTest.java:201)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="deactivateUser_forbidden" classname="com.user_service.controller.UserControllerTest" time="0.017" displayname="deactivateUser_forbidden()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:deactivateUser_forbidden()]"/>
+    <testcase name="deactivateUser_notFound" classname="com.user_service.controller.UserControllerTest" time="0.02" displayname="deactivateUser_notFound()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:deactivateUser_notFound()]"/>
+    <testcase name="getUsers_unauthorized" classname="com.user_service.controller.UserControllerTest" time="0.022" displayname="getUsers_unauthorized()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:getUsers_unauthorized()]">
+      <failure>java.lang.AssertionError: Status expected:&lt;401&gt; but was:&lt;403&gt;&#13;
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:61)&#13;
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:128)&#13;
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:640)&#13;
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)&#13;
+	at com.user_service.controller.UserControllerTest.getUsers_unauthorized(UserControllerTest.java:134)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="createUser_success" classname="com.user_service.controller.UserControllerTest" time="0.048" displayname="createUser_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:createUser_success()]"/>
+    <testcase name="deactivateUser_success" classname="com.user_service.controller.UserControllerTest" time="0.008" displayname="deactivateUser_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:deactivateUser_success()]">
+      <error>com.user_service.exception.ResourceNotFoundException: User not found&#13;
+	at com.user_service.controller.UserControllerTest.deactivateUser_success(UserControllerTest.java:145)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+    </testcase>
+    <testcase name="createUser_forbidden" classname="com.user_service.controller.UserControllerTest" time="0.015" displayname="createUser_forbidden()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:createUser_forbidden()]">
+      <failure>org.mockito.exceptions.verification.NeverWantedButInvoked: 
+userService.createUser(&lt;any&gt;, &lt;any&gt;);
+Never wanted here:
+-&gt; at com.user_service.controller.UserControllerTest.createUser_forbidden(UserControllerTest.java:113)
+But invoked here:
+-&gt; at com.user_service.controller.UserController.createUser(UserController.java:47) with arguments: [com.user_service.dto.CreateUserDTO@4219a4cc, ADMIN_001]
+&#13;
+	at com.user_service.controller.UserControllerTest.createUser_forbidden(UserControllerTest.java:113)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="getUsers_success" classname="com.user_service.controller.UserControllerTest" time="0.014" displayname="getUsers_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:getUsers_success()]"/>
+  </testsuite>
+</testrun>

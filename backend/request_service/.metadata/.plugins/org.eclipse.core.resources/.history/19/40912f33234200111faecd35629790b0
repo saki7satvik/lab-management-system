@@ -1,0 +1,104 @@
+package com.request_service.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.request_service.exception.UnauthorizedException;
+import com.request_service.service.InventoryClient;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class InventoryClientImpl implements InventoryClient {
+
+    private final RestTemplate restTemplate;
+
+    @Value("${services.inventory-service.url}")
+    private String inventoryServiceBaseUrl;
+
+    // 🔐 Extract JWT from current request
+    private String getAuthHeader() {
+        ServletRequestAttributes attrs =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (attrs == null) {
+            throw new UnauthorizedException("No request context");
+        }
+
+        String authHeader = attrs.getRequest().getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new UnauthorizedException("Missing authentication token");
+        }
+
+        return authHeader;
+    }
+
+    @Override
+    public Map<String, Boolean> validateComponents(List<String> componentIds) {
+    	System.out.println("validate components");
+    	
+        String url = inventoryServiceBaseUrl + "/components/validate";
+        System.out.println(url);
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.AUTHORIZATION, getAuthHeader());
+
+        HttpEntity<List<String>> entity = new HttpEntity<>(componentIds, headers);
+
+        try {
+            ResponseEntity<Map<String, Boolean>> response =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.POST,
+                            entity,
+                            new ParameterizedTypeReference<>() {}
+                    );
+
+            return Optional.ofNullable(response.getBody())
+                    .orElse(Collections.emptyMap());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Inventory service unavailable", e);
+        }
+    }
+
+    @Override
+    public Map<String, Integer> getAvailableQuantities(List<String> componentIds) {
+
+        String url = inventoryServiceBaseUrl + "/components/availability";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(HttpHeaders.AUTHORIZATION, getAuthHeader());
+
+        HttpEntity<List<String>> entity = new HttpEntity<>(componentIds, headers);
+
+        try {
+            ResponseEntity<Map<String, Integer>> response =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.POST,
+                            entity,
+                            new ParameterizedTypeReference<>() {}
+                    );
+
+            return Optional.ofNullable(response.getBody())
+                    .orElse(Collections.emptyMap());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Inventory service unavailable", e);
+        }
+    }
+}

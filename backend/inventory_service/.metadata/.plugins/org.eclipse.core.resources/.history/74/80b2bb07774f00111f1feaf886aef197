@@ -1,0 +1,481 @@
+package com.inventory_service.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.inventory_service.dto.request.CreateComponentDTO;
+import com.inventory_service.dto.response.ComponentResponseDTO;
+import com.inventory_service.dto.response.CurrentUser;
+import com.inventory_service.entity.Component;
+import com.inventory_service.entity.ComponentHistory;
+import com.inventory_service.enums.ActionType;
+import com.inventory_service.enums.Role;
+import com.inventory_service.enums.Status;
+import com.inventory_service.exception.BadRequestException;
+import com.inventory_service.exception.ConflictException;
+import com.inventory_service.exception.UnauthorizedException;
+import com.inventory_service.repository.ComponentHistoryRepository;
+import com.inventory_service.repository.InventoryRepository;
+import com.inventory_service.service.impl.InventoryServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+class CreateComponentTests {
+
+    @Mock
+    private InventoryRepository componentRepository;
+
+    @Mock
+    private ComponentHistoryRepository componentHistoryRepository;
+
+    @InjectMocks
+    private InventoryServiceImpl inventoryService;
+
+    // =====================================================
+    // TEST DATA FACTORY
+    // =====================================================
+    
+    private CurrentUser currentUser(
+            Role role,
+            Status status
+    ) {
+
+        return new CurrentUser(
+                "INS_001",
+                role,
+                status
+        );
+    }
+
+    private CreateComponentDTO validDTO() {
+
+    	CreateComponentDTO dto =
+                new CreateComponentDTO();
+
+        dto.setName("ESP32");
+        dto.setDescription("Microcontroller");
+        dto.setTotalQuantity(10);
+
+        return dto;
+    }
+
+    private Component component() {
+
+        Component component =
+                new Component();
+
+        component.setId("COMP_001");
+        component.setName("ESP32");
+        component.setDescription("Microcontroller");
+
+        component.setTotalQuantity(10);
+        component.setAvailableQuantity(10);
+
+        return component;
+    }
+
+    // =====================================================
+    // TESTS
+    // =====================================================
+
+    @Test
+    @DisplayName("Should create component successfully")
+    void createComponent_success() {
+
+    	CurrentUser currentUser =
+            currentUser(
+                    Role.INSTRUCTOR,
+                    Status.ACTIVE
+            );
+
+    	CreateComponentDTO dto = validDTO();
+
+    	when(componentRepository.existsByName("ESP32"))
+            	.thenReturn(false);
+
+    	when(componentRepository.save(any(Component.class)))
+            	.thenAnswer(invocation -> invocation.getArgument(0));
+
+    	ComponentResponseDTO response =
+    			inventoryService.createComponent(
+    					dto,
+    					currentUser
+    					);
+
+    	assertNotNull(response);
+
+    	assertEquals(
+    			"ESP32",
+    			response.getName()
+    				);
+
+    	verify(componentRepository)
+            	.save(any(Component.class));
+
+    	verify(componentHistoryRepository)
+            	.save(any(ComponentHistory.class));
+    }
+    
+    @Test
+    @DisplayName("Should deny STUDENT from creating component")
+    void createComponent_studentDenied() {
+
+        CurrentUser currentUser =
+                currentUser(
+                        Role.STUDENT,
+                        Status.ACTIVE
+                );
+
+        CreateComponentDTO dto = validDTO();
+
+        UnauthorizedException ex =
+                assertThrows(
+                        UnauthorizedException.class,
+                        () -> inventoryService.createComponent(
+                                dto,
+                                currentUser
+                        )
+                );
+
+        assertEquals(
+                "Access denied",
+                ex.getMessage()
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+    
+    @Test
+    @DisplayName("Should deny ADMIN from creating component")
+    void createComponent_adminDenied() {
+
+        CurrentUser currentUser =
+                currentUser(
+                        Role.ADMIN,
+                        Status.ACTIVE
+                );
+
+        CreateComponentDTO dto = validDTO();
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> inventoryService.createComponent(
+                        dto,
+                        currentUser
+                )
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+    
+    @Test
+    @DisplayName("Should deny SUPER_ADMIN from creating component")
+    void createComponent_superAdminDenied() {
+
+        CurrentUser currentUser =
+                currentUser(
+                        Role.SUPER_ADMIN,
+                        Status.ACTIVE
+                );
+
+        CreateComponentDTO dto = validDTO();
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> inventoryService.createComponent(
+                        dto,
+                        currentUser
+                )
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+    
+    @Test
+    @DisplayName("Should deny inactive instructor")
+    void createComponent_inactiveInstructorDenied() {
+
+        CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.INACTIVE
+                );
+
+        CreateComponentDTO dto = validDTO();
+
+        UnauthorizedException ex =
+                assertThrows(
+                        UnauthorizedException.class,
+                        () -> inventoryService.createComponent(
+                                dto,
+                                currentUser
+                        )
+                );
+
+        assertEquals(
+                "Inactive user cannot perform this action",
+                ex.getMessage()
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+    
+    @Test
+    @DisplayName("Should fail when current user is null")
+    void createComponent_nullUser() {
+
+        CreateComponentDTO dto = validDTO();
+
+        UnauthorizedException ex =
+                assertThrows(
+                        UnauthorizedException.class,
+                        () -> inventoryService.createComponent(
+                                dto,
+                                null
+                        )
+                );
+
+        assertEquals(
+                "User information is missing",
+                ex.getMessage()
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+    
+    @Test
+    @DisplayName("Should fail when component already exists")
+    void createComponent_duplicateName() {
+    	
+    	CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.ACTIVE
+                );
+
+    	CreateComponentDTO dto = validDTO();
+
+        when(componentRepository.existsByName("ESP32"))
+                .thenReturn(true);
+
+        ConflictException ex =
+                assertThrows(
+                        ConflictException.class,
+                        () -> inventoryService.createComponent(
+                                dto,
+                                currentUser
+                        )
+                );
+
+        assertEquals(
+                "Component already exists",
+                ex.getMessage()
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+
+        verify(componentHistoryRepository, never())
+                .save(any());
+    }
+
+    @Test
+    @DisplayName("Should fail when quantity is zero")
+    void createComponent_zeroQuantity() {
+    	
+    	CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.ACTIVE
+                );
+
+    	CreateComponentDTO dto = validDTO();
+
+        dto.setTotalQuantity(0);
+
+        BadRequestException ex =
+                assertThrows(
+                        BadRequestException.class,
+                        () -> inventoryService.createComponent(
+                                dto,
+                                currentUser
+                        )
+                );
+
+        assertEquals(
+                "Quantity must be greater than zero",
+                ex.getMessage()
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+
+    @Test
+    @DisplayName("Should fail when quantity is negative")
+    void createComponent_negativeQuantity() {
+    	
+    	CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.ACTIVE
+                );
+
+    	CreateComponentDTO dto = validDTO();
+
+        dto.setTotalQuantity(-5);
+
+        BadRequestException ex =
+                assertThrows(
+                        BadRequestException.class,
+                        () -> inventoryService.createComponent(
+                                dto,
+                                currentUser
+                                
+                        )
+                );
+
+        assertEquals(
+                "Quantity must be greater than zero",
+                ex.getMessage()
+        );
+
+        verify(componentRepository, never())
+                .save(any());
+    }
+
+    @Test
+    @DisplayName("Should trim component name before saving")
+    void createComponent_trimName() {
+    	
+    	CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.ACTIVE
+                );
+
+    	CreateComponentDTO dto = validDTO();
+
+        dto.setName("   ESP32   ");
+
+        when(componentRepository.existsByName("ESP32"))
+                .thenReturn(false);
+
+        when(componentRepository.save(any(Component.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        inventoryService.createComponent(
+                dto,
+                currentUser
+        );
+
+        ArgumentCaptor<Component> captor =
+                ArgumentCaptor.forClass(Component.class);
+
+        verify(componentRepository)
+                .save(captor.capture());
+
+        Component saved =
+                captor.getValue();
+
+        assertEquals("ESP32", saved.getName());
+    }
+
+    @Test
+    @DisplayName("Should initialize available quantity equal to total quantity")
+    void createComponent_initializeAvailableQuantity() {
+    	
+    	CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.ACTIVE
+                );
+
+    	CreateComponentDTO dto = validDTO();
+
+        when(componentRepository.existsByName("ESP32"))
+                .thenReturn(false);
+
+        when(componentRepository.save(any(Component.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        inventoryService.createComponent(
+                dto,
+                currentUser
+        );
+
+        ArgumentCaptor<Component> captor =
+                ArgumentCaptor.forClass(Component.class);
+
+        verify(componentRepository)
+                .save(captor.capture());
+
+        Component saved =
+                captor.getValue();
+
+        assertEquals(
+                saved.getTotalQuantity(),
+                saved.getAvailableQuantity()
+        );
+    }
+
+    @Test
+    @DisplayName("Should create history entry")
+    void createComponent_shouldCreateHistory() {
+    	
+    	CurrentUser currentUser =
+                currentUser(
+                        Role.INSTRUCTOR,
+                        Status.ACTIVE
+                );
+
+    	CreateComponentDTO dto = validDTO();
+
+        when(componentRepository.existsByName("ESP32"))
+                .thenReturn(false);
+
+        when(componentRepository.save(any(Component.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        inventoryService.createComponent(
+                dto,
+                currentUser
+        );
+
+        ArgumentCaptor<ComponentHistory> captor =
+                ArgumentCaptor.forClass(
+                        ComponentHistory.class
+                );
+
+        verify(componentHistoryRepository)
+                .save(captor.capture());
+
+        ComponentHistory history =
+                captor.getValue();
+
+        assertEquals(
+                ActionType.CREATE,
+                history.getAction()
+        );
+
+        assertEquals(
+                "ADMIN_001",
+                history.getPerformedBy()
+        );
+    }
+}

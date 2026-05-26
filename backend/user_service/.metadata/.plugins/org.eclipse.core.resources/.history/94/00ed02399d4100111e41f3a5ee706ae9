@@ -1,0 +1,6 @@
+package com.user_service.auth;
+
+public class LoginRequestDTO {
+    private String collegeId;
+    private String password;
+}

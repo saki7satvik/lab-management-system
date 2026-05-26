@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="JwtFilterTest" project="inventory_service" tests="4" started="4" failures="1" errors="1" ignored="0">
+  <testsuite name="com.inventory_service.security.JwtFilterTest" time="1.136" displayname="JwtFilterTest" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]">
+    <testcase name="shouldSkip_whenHeaderMissing" classname="com.inventory_service.security.JwtFilterTest" time="1.093" displayname="shouldSkip_whenHeaderMissing()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldSkip_whenHeaderMissing()]"/>
+    <testcase name="shouldSkip_whenHeaderInvalid" classname="com.inventory_service.security.JwtFilterTest" time="0.004" displayname="shouldSkip_whenHeaderInvalid()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldSkip_whenHeaderInvalid()]"/>
+    <testcase name="shouldSkip_whenTokenInvalid" classname="com.inventory_service.security.JwtFilterTest" time="0.027" displayname="shouldSkip_whenTokenInvalid()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldSkip_whenTokenInvalid()]">
+      <failure>Wanted but not invoked:
+filterChain.doFilter(
+    org.springframework.mock.web.MockHttpServletRequest@109d724c,
+    org.springframework.mock.web.MockHttpServletResponse@1704f67f
+);
+-&gt; at com.inventory_service.security.JwtFilterTest.shouldSkip_whenTokenInvalid(JwtFilterTest.java:126)
+Actually, there were zero interactions with this mock.
+&#13;
+	at com.inventory_service.security.JwtFilterTest.shouldSkip_whenTokenInvalid(JwtFilterTest.java:126)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="shouldAuthenticate_whenTokenValid" classname="com.inventory_service.security.JwtFilterTest" time="0.007" displayname="shouldAuthenticate_whenTokenValid()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldAuthenticate_whenTokenValid()]">
+      <error>java.lang.NullPointerException: Name is null&#13;
+	at java.base/java.lang.Enum.valueOf(Enum.java:291)&#13;
+	at com.inventory_service.enums.Status.valueOf(Status.java:3)&#13;
+	at com.inventory_service.security.JwtFilter.doFilterInternal(JwtFilter.java:78)&#13;
+	at com.inventory_service.security.JwtFilterTest.shouldAuthenticate_whenTokenValid(JwtFilterTest.java:153)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+    </testcase>
+  </testsuite>
+</testrun>

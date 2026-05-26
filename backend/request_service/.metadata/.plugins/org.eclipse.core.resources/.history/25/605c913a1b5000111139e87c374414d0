@@ -1,0 +1,161 @@
+package com.request_service.service;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.request_service.dto.response.CurrentUser;
+import com.request_service.dto.response.RequestResponseDTO;
+import com.request_service.entity.Request;
+import com.request_service.enums.Role;
+import com.request_service.enums.Status;
+import com.request_service.exception.UnauthorizedException;
+import com.request_service.repository.RequestRepository;
+import com.request_service.service.impl.RequestServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class GetRequestMethodTests {
+	
+	@Mock
+    private RequestRepository requestRepository;
+
+    @Mock
+    private InventoryClient inventoryClient;
+
+    @InjectMocks
+    private RequestServiceImpl requestService;
+    
+    private CurrentUser studentUser;
+    private CurrentUser anotherStudent;
+    private CurrentUser instructorUser;
+    private CurrentUser adminUser;
+    private CurrentUser inactiveUser;
+    
+    @BeforeEach
+    void setUp() {
+
+        studentUser = CurrentUser.builder()
+                .id("STU_001")
+                .role(Role.STUDENT)
+                .status(Status.ACTIVE)
+                .build();
+
+        anotherStudent = CurrentUser.builder()
+                .id("STU_999")
+                .role(Role.STUDENT)
+                .status(Status.ACTIVE)
+                .build();
+
+        instructorUser = CurrentUser.builder()
+                .id("INS_001")
+                .role(Role.INSTRUCTOR)
+                .status(Status.ACTIVE)
+                .build();
+
+        adminUser = CurrentUser.builder()
+                .id("ADM_001")
+                .role(Role.ADMIN)
+                .status(Status.ACTIVE)
+                .build();
+
+        inactiveUser = CurrentUser.builder()
+                .id("STU_002")
+                .role(Role.STUDENT)
+                .status(Status.INACTIVE)
+                .build();
+    }
+    
+    @Test
+    void getRequestById_owner_success() {
+
+        Request request = Request.builder()
+                .id("REQ_1")
+                .createdBy("STU_001")
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        RequestResponseDTO response =
+                requestService.getRequestById(
+                        "REQ_1",
+                        studentUser
+                );
+
+        assertNotNull(response);
+
+        verify(requestRepository)
+                .findById("REQ_1");
+    }
+    
+    @Test
+    void getRequestById_instructor_success() {
+
+        Request request = Request.builder()
+                .id("REQ_1")
+                .createdBy("STU_001")
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        RequestResponseDTO response =
+                requestService.getRequestById(
+                        "REQ_1",
+                        instructorUser
+                );
+
+        assertNotNull(response);
+
+        verify(requestRepository)
+                .findById("REQ_1");
+    }
+    
+    @Test
+    void getRequestById_studentForbidden() {
+
+        Request request = Request.builder()
+                .id("REQ_1")
+                .createdBy("STU_001")
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> requestService.getRequestById(
+                        "REQ_1",
+                        anotherStudent
+                )
+        );
+    }
+    
+    @Test
+    void getRequestById_inactiveUser_forbidden() {
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> requestService.getRequestById(
+                        "REQ_1",
+                        inactiveUser
+                )
+        );
+
+        verify(requestRepository, never())
+                .findById(any());
+    }
+
+}

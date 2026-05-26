@@ -1,0 +1,18 @@
+package com.return_service.service;
+
+import com.return_service.dto.*;
+
+import java.util.List;
+
+public interface ReturnService {
+
+	ReturnResponseDTO processReturn(ProcessReturnRequestDTO request, String instructorId);
+
+    // 📄 Fetch single return
+    ReturnResponseDTO getReturnById(String returnId, String requesterId, String role);
+    
+    List<ReturnResponseDTO> getReturnsByIssue(String issueId, String requesterId, String role);
+
+    // 📄 Fetch list (filters later if needed)
+    List<ReturnResponseDTO> getReturns(String requesterId, String role);
+}

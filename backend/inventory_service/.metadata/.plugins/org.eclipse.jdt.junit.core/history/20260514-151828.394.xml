@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="GetComponentTests" project="inventory_service" tests="5" started="5" failures="0" errors="0" ignored="0">
+  <testsuite name="com.inventory_service.service.GetComponentTests" time="1.359" displayname="GetComponentTests" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.GetComponentTests]">
+    <testcase name="getAllComponents_empty" classname="com.inventory_service.service.GetComponentTests" time="1.329" displayname="getAllComponents_empty()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.GetComponentTests]/[method:getAllComponents_empty()]"/>
+    <testcase name="getComponentById_notFound" classname="com.inventory_service.service.GetComponentTests" time="0.015" displayname="getComponentById_notFound()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.GetComponentTests]/[method:getComponentById_notFound()]"/>
+    <testcase name="getAllComponents_success" classname="com.inventory_service.service.GetComponentTests" time="0.004" displayname="getAllComponents_success()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.GetComponentTests]/[method:getAllComponents_success()]"/>
+    <testcase name="getComponentById_inactive" classname="com.inventory_service.service.GetComponentTests" time="0.003" displayname="getComponentById_inactive()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.GetComponentTests]/[method:getComponentById_inactive()]"/>
+    <testcase name="getComponentById_success" classname="com.inventory_service.service.GetComponentTests" time="0.004" displayname="getComponentById_success()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.GetComponentTests]/[method:getComponentById_success()]"/>
+  </testsuite>
+</testrun>

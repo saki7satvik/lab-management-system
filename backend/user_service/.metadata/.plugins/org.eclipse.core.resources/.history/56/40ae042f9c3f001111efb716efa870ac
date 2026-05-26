@@ -1,0 +1,65 @@
+package com.user_service.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.dto.UserResponseDTO;
+import com.user_service.service.UserService;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // ✅ Create User
+    @PostMapping
+    public ResponseEntity<UserResponseDTO> createUser(
+            @Valid @RequestBody CreateUserDTO dto,
+            @RequestHeader("userId") String currentUserId) {
+
+        return ResponseEntity.ok(
+                userService.createUser(dto, currentUserId)
+        );
+    }
+
+    // ✅ Get All Users
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(
+            @RequestHeader("collegeId") String collegeId) {
+
+        return ResponseEntity.ok(
+                userService.getAllUsers(collegeId)
+        );
+    }
+
+    // ✅ Get User By ID
+    @GetMapping("/{collegeId}")
+    public ResponseEntity<UserResponseDTO> getUserById(
+            @PathVariable String collegeId) {
+
+        return ResponseEntity.ok(
+                userService.getUserByCollegeId(collegeId)
+        );
+    }
+
+    // ✅ Deactivate User
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<UserResponseDTO> deactivateUser(
+            @PathVariable String id,
+            @RequestHeader("userId") String currentUserId) {
+
+        return ResponseEntity.ok(
+                userService.deactivateUser(id, currentUserId)
+        );
+    }
+}

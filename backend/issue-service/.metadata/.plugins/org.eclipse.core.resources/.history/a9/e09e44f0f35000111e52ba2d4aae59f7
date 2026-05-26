@@ -1,0 +1,41 @@
+package com.issue_service.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.issue_service.config.SecurityConfig;
+import com.issue_service.exception.GlobalExceptionHandler;
+import com.issue_service.secutity.CustomAccessDeniedHandler;
+import com.issue_service.secutity.CustomAuthenticationEntryPoint;
+import com.issue_service.secutity.JwtFilter;
+import com.issue_service.secutity.JwtUtil;
+import com.issue_service.service.IssueService;
+
+@WebMvcTest(IssueController.class)
+@AutoConfigureMockMvc
+@Import({
+        SecurityConfig.class,
+        JwtFilter.class,
+        JwtUtil.class,
+        CustomAccessDeniedHandler.class,
+        CustomAuthenticationEntryPoint.class,
+        GlobalExceptionHandler.class
+})
+public class IssueServiceControllerTests {
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@MockitoBean
+	private IssueService issueService;
+	
+	@MockitoBean
+	private JwtUtil jwtUtil;
+}

@@ -1,0 +1,59 @@
+package com.issue_service.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.issue_service.dto.request.CreateIssueDTO;
+import com.issue_service.dto.request.IssueItemDTO;
+import com.issue_service.dto.response.CurrentUser;
+import com.issue_service.dto.response.IssueResponseDTO;
+import com.issue_service.dto.response.RequestItemResponseDTO;
+import com.issue_service.dto.response.RequestResponseDTO;
+import com.issue_service.entity.Issue;
+import com.issue_service.entity.IssueItem;
+import com.issue_service.enums.IssueStatus;
+import com.issue_service.enums.RequestStatus;
+import com.issue_service.enums.Role;
+import com.issue_service.enums.Status;
+import com.issue_service.exception.BadRequestException;
+import com.issue_service.exception.ConflictException;
+import com.issue_service.exception.ResourceNotFoundException;
+import com.issue_service.exception.ServiceUnavailableException;
+import com.issue_service.exception.UnauthorizedException;
+import com.issue_service.repository.IssueRepository;
+import com.issue_service.service.impl.IssueServiceImpl;
+
+import feign.FeignException;
+
+@ExtendWith(MockitoExtension.class)
+public class IssueServiceGetMethodTest {
+	
+	@Mock
+	private InventoryClient inventoryClient;
+	
+	@Mock
+	private RequestClient requestClient;
+	
+	@Mock
+	private IssueRepository issueRepository;
+	
+	@InjectMocks
+	private IssueServiceImpl issueService;
+}

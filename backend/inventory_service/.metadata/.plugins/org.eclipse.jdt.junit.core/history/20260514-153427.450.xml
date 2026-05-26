@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="DeductStockTests" project="inventory_service" tests="11" started="11" failures="1" errors="0" ignored="0">
+  <testsuite name="com.inventory_service.service.DeductStockTests" time="1.271" displayname="DeductStockTests" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]">
+    <testsuite name="com.inventory_service.service.DeductStockTests$DeductStockTestCases" time="1.271" displayname="Deduct Stock Tests" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]">
+      <testcase name="deductStock_success" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="1.202" displayname="Should deduct stock successfully" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_success()]"/>
+      <testcase name="deductStock_componentNotFound" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.006" displayname="Should fail when component not found" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_componentNotFound()]"/>
+      <testcase name="deductStock_zeroQuantity" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.005" displayname="Should fail when quantity is zero" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_zeroQuantity()]"/>
+      <testcase name="deductStock_inactiveInstructor" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.005" displayname="Should deny inactive instructor" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_inactiveInstructor()]"/>
+      <testcase name="deductStock_updatedByValidation" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.005" displayname="Should update updatedBy field" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_updatedByValidation()]"/>
+      <testcase name="deductStock_accessDenied" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.005" displayname="Should deny non instructor" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_accessDenied()]"/>
+      <testcase name="deductStock_nullUser" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.005" displayname="Should fail when current user is null" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_nullUser()]"/>
+      <testcase name="deductStock_insufficientStock" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.004" displayname="Should fail when stock insufficient" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_insufficientStock()]"/>
+      <testcase name="deductStock_negativeQuantity" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.004" displayname="Should fail when quantity is negative" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_negativeQuantity()]"/>
+      <testcase name="deductStock_historyValidation" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.019" displayname="Should create history entry" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_historyValidation()]">
+        <failure>
+          <expected>2</expected>
+          <actual>-2</actual>
+          org.opentest4j.AssertionFailedError: expected: &lt;2&gt; but was: &lt;-2&gt;&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)&#13;
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)&#13;
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)&#13;
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)&#13;
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)&#13;
+	at com.inventory_service.service.DeductStockTests$DeductStockTestCases.deductStock_historyValidation(DeductStockTests.java:534)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+
+        </failure>
+      </testcase>
+      <testcase name="deductStock_inactiveComponent" classname="com.inventory_service.service.DeductStockTests.DeductStockTestCases" time="0.004" displayname="Should fail when component inactive" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.service.DeductStockTests]/[nested-class:DeductStockTestCases]/[method:deductStock_inactiveComponent()]"/>
+    </testsuite>
+  </testsuite>
+</testrun>

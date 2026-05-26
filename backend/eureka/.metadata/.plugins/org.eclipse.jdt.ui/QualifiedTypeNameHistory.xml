@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="org.springframework.cloud.netflix.eureka.server.EnableEurekaServer"/>
+    <fullyQualifiedTypeName name="com.request_service.enums.Role"/>
+    <fullyQualifiedTypeName name="ch.qos.logback.core.status.Status"/>
+    <fullyQualifiedTypeName name="com.request_service.enums.Status"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.response.CurrentUser"/>
+    <fullyQualifiedTypeName name="com.inventory_service.enums.Role"/>
+    <fullyQualifiedTypeName name="com.inventory_service.enums.Status"/>
+    <fullyQualifiedTypeName name="com.inventory_service.dto.response.CurrentUser"/>
+    <fullyQualifiedTypeName name="com.user_service.enums.Role"/>
+    <fullyQualifiedTypeName name="com.user_service.enums.Status"/>
+    <fullyQualifiedTypeName name="com.user_service.dto.CurrentUser"/>
+    <fullyQualifiedTypeName name="java.awt.List"/>
+    <fullyQualifiedTypeName name="java.util.List"/>
+    <fullyQualifiedTypeName name="java.util.Collections"/>
+    <fullyQualifiedTypeName name="com.return_service.enums.TargetType"/>
+    <fullyQualifiedTypeName name="com.return_service.enums.RequestItemStatus"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.GetMapping"/>
+    <fullyQualifiedTypeName name="com.return_service.dto.external.RequestResponseDTO"/>
+    <fullyQualifiedTypeName name="com.return_service.service.RequestClient"/>
+    <fullyQualifiedTypeName name="com.return_service.enums.RequestStatus"/>
+    <fullyQualifiedTypeName name="com.return_service.dto.ReturnItemResponseDTO"/>
+    <fullyQualifiedTypeName name="lombok.Setter"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.response.RequestItemResponseDTO"/>
+    <fullyQualifiedTypeName name="com.request_service.enums.RequestStatus"/>
+    <fullyQualifiedTypeName name="com.request_service.enums.RequestItemStatus"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.request.DeductStockItemDTO"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.request.BulkDeductStockRequestDTO"/>
+    <fullyQualifiedTypeName name="feign.FeignException"/>
+    <fullyQualifiedTypeName name="lombok.Getter"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.external.StockUpdateResponseDTO"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.PutMapping"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.PostMapping"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.external.BulkStockUpdateDTO"/>
+    <fullyQualifiedTypeName name="com.request_service.dto.external.StockUpdateItemDTO"/>
+    <fullyQualifiedTypeName name="lombok.AllArgsConstructor"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="feign.FeignException.NotFound"/>
+    <fullyQualifiedTypeName name="com.return_service.exception.ResourceNotFoundException"/>
+    <fullyQualifiedTypeName name="org.springframework.web.bind.annotation.PathVariable"/>
+</qualifiedTypeNameHistroy>

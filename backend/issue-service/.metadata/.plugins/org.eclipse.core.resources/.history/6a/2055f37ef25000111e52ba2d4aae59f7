@@ -1,0 +1,26 @@
+package com.issue_service.controller;
+
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+
+import com.issue_service.config.SecurityConfig;
+import com.issue_service.exception.GlobalExceptionHandler;
+import com.issue_service.secutity.CustomAccessDeniedHandler;
+import com.issue_service.secutity.CustomAuthenticationEntryPoint;
+import com.issue_service.secutity.JwtFilter;
+import com.issue_service.secutity.JwtUtil;
+
+@WebMvcTest(IssueController.class)
+@AutoConfigureMockMvc
+@Import({
+        SecurityConfig.class,
+        JwtFilter.class,
+        JwtUtil.class,
+        CustomAccessDeniedHandler.class,
+        CustomAuthenticationEntryPoint.class,
+        GlobalExceptionHandler.class
+})
+public class IssueServiceControllerTests {
+
+}

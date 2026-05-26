@@ -1,0 +1,21 @@
+package com.issue_service.dto.response;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+public class IssueResponseDTO {
+
+    private String issueId;
+    private String requestId;
+    private String issuedBy;
+    private String status;
+    private LocalDateTime issueDate;
+
+    private List<IssueItemResponseDTO> items;
+
+    // getters & setters
+}

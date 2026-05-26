@@ -1,0 +1,5 @@
+package com.return_service.exception;
+
+public class ServiceUnavailableException {
+
+}

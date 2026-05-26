@@ -1,0 +1,296 @@
+package com.return_service.service.impl;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.return_service.dto.*;
+import com.return_service.dto.external.*;
+import com.return_service.entity.Return;
+import com.return_service.entity.ReturnItem;
+import com.return_service.enums.ItemCondition;
+import com.return_service.enums.ReturnStatus;
+import com.return_service.enums.Role;
+import com.return_service.enums.Status;
+import com.return_service.exception.BadRequestException;
+import com.return_service.exception.ConflictException;
+import com.return_service.exception.ResourceNotFoundException;
+import com.return_service.exception.ServiceUnavailableException;
+import com.return_service.exception.UnauthorizedException;
+import com.return_service.repository.ReturnRepository;
+import com.return_service.service.InventoryClient;
+import com.return_service.service.IssueClient;
+import com.return_service.service.ReturnService;
+
+import feign.FeignException;
+
+import org.springframework.transaction.annotation.Transactional;
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class ReturnServiceImpl implements ReturnService {
+		
+	private final IssueClient issueClient;
+	
+	private final InventoryClient inventoryClient;
+	
+	private final ReturnRepository returnRepository;
+	
+	@Override
+	@Transactional
+	public ReturnResponseDTO processReturn(ProcessReturnRequestDTO request, CurrentUser currentUser) {
+
+		validateActiveUser(currentUser);
+	    // 1. Fetch issue
+		IssueResponseDTO issue;
+
+		try {
+
+		    issue = issueClient.getIssueById(
+		            request.getIssueId());
+
+		} catch (FeignException.NotFound ex) {
+
+		    throw new ResourceNotFoundException(
+		            "Issue not found");
+
+		} catch (FeignException ex) {
+
+		    throw new ServiceUnavailableException(
+		            "Issue service unavailable");
+		}
+
+	    if (!"ISSUED".equals(issue.getStatus()) && 
+	        !"PARTIALLY_ISSUED".equals(issue.getStatus())) {
+	        throw new BadRequestException("Invalid issue status for return");
+	    }
+
+	    // 2. Map issueItems for quick lookup
+	    Map<String, IssueItemDTO> issueItemMap = issue.getItems()
+	            .stream()
+	            .collect(Collectors.toMap(IssueItemDTO::getIssueItemId, i -> i));
+
+	    // 3. Validate input + prevent duplicates
+	    Set<String> seen = new HashSet<>();
+
+	    for (ProcessReturnItemDTO item : request.getItems()) {
+
+	    	if (item.getIssueItemId() == null
+	    	        || item.getIssueItemId().isBlank()) {
+
+	    	    throw new BadRequestException(
+	    	            "Issue item id is required");
+	    	}
+	    	
+	        if (!seen.add(item.getIssueItemId())) {
+	            throw new BadRequestException("Duplicate issueItemId");
+	        }
+
+	        IssueItemDTO issueItem = issueItemMap.get(item.getIssueItemId());
+
+	        if (issueItem == null) {
+	            throw new BadRequestException("Invalid issueItemId");
+	        }
+
+	        if (item.getQuantityReturned() <= 0) {
+	            throw new BadRequestException("Quantity must be greater than 0");
+	        }
+
+	        // 🔥 CRITICAL: prevent over-return
+	        int alreadyReturned = returnRepository
+	                .getTotalReturnedQuantity(item.getIssueItemId());
+
+	        if (alreadyReturned + item.getQuantityReturned() > issueItem.getQuantityIssued()) {
+	            throw new ConflictException("Return exceeds issued quantity for item");
+	        }
+	    }
+
+	    // 4. Create Return entity
+	    Return returnEntity = Return.builder()
+	            .issueId(issue.getIssueId())
+	            .returnedBy(issue.getIssuedBy()) // student
+	            .inspectedBy(currentUser.getId())
+	            .status(ReturnStatus.COMPLETED)
+	            .remarks(request.getRemarks())
+	            .fineGenerated(false)
+	            .build();
+
+	    List<ReturnItem> returnItems = new ArrayList<>();
+
+	    // 5. Prepare inventory add-back
+	    Map<String, Integer> addBackMap = new HashMap<>();
+
+	    boolean hasDamage = false;
+
+	    for (ProcessReturnItemDTO itemDTO : request.getItems()) {
+
+	        IssueItemDTO issueItem = issueItemMap.get(itemDTO.getIssueItemId());
+
+	        ReturnItem returnItem = ReturnItem.builder()
+	                .issueItemId(itemDTO.getIssueItemId())
+	                .quantityReturned(itemDTO.getQuantityReturned())
+	                .condition(itemDTO.getCondition())
+	                .damageRemarks(itemDTO.getDamageRemarks())
+	                .processed(true)
+	                .returnEntity(returnEntity)
+	                .build();
+
+	        returnItems.add(returnItem);
+
+	        // 6. Inventory logic
+	        if (itemDTO.getCondition() == ItemCondition.GOOD) {
+
+	            addBackMap.merge(
+	                    issueItem.getComponentId(),
+	                    itemDTO.getQuantityReturned(),
+	                    Integer::sum
+	            );
+
+	        } else {
+	            hasDamage = true;
+	        }
+	    }
+
+	    returnEntity.setItems(returnItems);
+
+	    // 7. Call Inventory Service (ONLY for GOOD items)
+	    if (!addBackMap.isEmpty()) {
+
+	        List<AddBackRequestDTO> addBackList = addBackMap.entrySet()
+	                .stream()
+	                .map(e -> new AddBackRequestDTO(e.getKey(), e.getValue()))
+	                .toList();
+
+	        BulkAddBackRequestDTO bulkRequest = new BulkAddBackRequestDTO();
+	        bulkRequest.setItems(addBackList);
+
+	        inventoryClient.addBackStock(bulkRequest);
+	    }
+
+	    // 8. Fine trigger (placeholder)
+	    if (hasDamage) {
+	        // TODO: call Fine Service
+	        returnEntity.setFineGenerated(true);
+	    }
+
+	    // 9. Save
+	    Return saved = returnRepository.save(returnEntity);
+
+	    // 10. Convert to response
+	    return mapToResponse(saved);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public ReturnResponseDTO getReturnById(String returnId, CurrentUser currentUser) {
+		
+		validateActiveUser(currentUser);
+		
+	    Return returnEntity = returnRepository.findById(returnId)
+	            .orElseThrow(() -> new ResourceNotFoundException("Return not found"));
+	    
+	    // need to check if the current user is active
+
+	    return mapToResponse(returnEntity);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<ReturnResponseDTO> getReturns(CurrentUser currentUser) {
+
+		validateActiveUser(currentUser);
+		
+	    List<Return> returns;
+
+	    if ("STUDENT".equals(currentUser.getRole().name())) {
+	        // student sees only their returns
+	        returns = returnRepository.findByReturnedBy(currentUser.getId());
+
+	    } else {
+	        // instructor/admin sees all
+	        returns = returnRepository.findAll();
+	    }
+
+	    return returns.stream()
+	            .map(this::mapToResponse)
+	            .toList();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<ReturnResponseDTO> getReturnsByIssue(String issueId, CurrentUser currentUser) {
+
+		validateActiveUser(currentUser);
+		
+	    List<Return> returns = returnRepository.findByIssueId(issueId);
+
+	    if ("STUDENT".equals(currentUser.getRole().name())) {
+	        returns = returns.stream()
+	                .filter(r -> r.getReturnedBy().equals(currentUser.getId()))
+	                .toList();
+	    }
+
+	    return returns.stream()
+	            .map(this::mapToResponse)
+	            .toList();
+	}
+	
+	private ReturnResponseDTO mapToResponse(Return returnEntity) {
+
+	    List<ReturnItemResponseDTO> itemResponses = returnEntity.getItems()
+	            .stream()
+	            .map(item -> ReturnItemResponseDTO.builder()
+	                    .id(item.getId())
+	                    .issueItemId(item.getIssueItemId())
+	                    .quantityReturned(item.getQuantityReturned())
+	                    .condition(item.getCondition())
+	                    .damageRemarks(item.getDamageRemarks())
+	                    .processed(item.isProcessed())
+	                    .build()
+	            )
+	            .toList();
+
+	    return ReturnResponseDTO.builder()
+	            .id(returnEntity.getId())
+	            .issueId(returnEntity.getIssueId())
+	            .returnedBy(returnEntity.getReturnedBy())
+	            .inspectedBy(returnEntity.getInspectedBy())
+	            .status(returnEntity.getStatus())
+	            .overallCondition(returnEntity.getOverallCondition())
+	            .fineGenerated(returnEntity.isFineGenerated())
+	            .remarks(returnEntity.getRemarks())
+	            .createdAt(returnEntity.getCreatedAt())
+	            .inspectedAt(returnEntity.getInspectedAt())
+	            .items(itemResponses)
+	            .build();
+	}
+	
+	private void validateActiveUser(CurrentUser currentUser) {
+
+	    if (currentUser.getStatus() != Status.ACTIVE) {
+
+	        throw new UnauthorizedException(
+	                "Inactive users cannot access returns");
+	    }
+	}
+	
+	private void validateInstructor(CurrentUser currentUser) {
+
+	    validateActiveUser(currentUser);
+
+	    if (currentUser.getRole() != Role.INSTRUCTOR) {
+
+	        throw new UnauthorizedException(
+	                "Only instructors can process returns");
+	    }
+	}
+	
+	private boolean canViewAllReturns(CurrentUser currentUser) {
+
+	    return currentUser.getRole() == Role.ADMIN
+	            || currentUser.getRole() == Role.INSTRUCTOR;
+	}
+
+}

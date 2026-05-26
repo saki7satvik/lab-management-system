@@ -1,0 +1,31 @@
+package com.return_service.dto.external;
+
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RequestResponseDTO {
+
+    private String id;
+
+    private String createdBy;
+
+    private TargetType targetType;
+
+    private String targetId;
+
+    private RequestStatus status;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    private List<RequestItemResponseDTO> items;
+}

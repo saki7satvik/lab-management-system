@@ -1,0 +1,5 @@
+package com.issue_service.service;
+
+public class IssueServiceGetMethodTest {
+
+}

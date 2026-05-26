@@ -1,0 +1,201 @@
+package com.user_service.controller;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.user_service.config.TestConfig;
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.dto.UserResponseDTO;
+import com.user_service.enums.Role;
+import com.user_service.enums.Status;
+import com.user_service.exception.ResourceNotFoundException;
+import com.user_service.service.UserService;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(UserController.class)
+@Import(TestConfig.class)
+class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    // -----------------------------------------------------
+    // 🧱 TEST DATA
+    // -----------------------------------------------------
+
+    private CreateUserDTO validCreateDTO() {
+        CreateUserDTO dto = new CreateUserDTO();
+        dto.setCollegeId("STU_101");
+        dto.setName("Satvik");
+        dto.setEmail("satvik@test.com");
+        dto.setPhone("1234567890");
+        dto.setRole(Role.STUDENT);
+        return dto;
+    }
+
+    private UserResponseDTO responseDTO(Status status) {
+        return new UserResponseDTO(
+                "STU_101",
+                "Satvik",
+                "satvik@test.com",
+                "1234567890",
+                Role.STUDENT,
+                status
+        );
+    }
+
+    // =====================================================
+    // 🟢 CREATE USER
+    // =====================================================
+
+    @Test
+    @WithMockUser(username = "ADMIN_001", roles = "ADMIN")
+    void createUser_success() throws Exception {
+
+        CreateUserDTO dto = validCreateDTO();
+
+        when(userService.createUser(any(), any()))
+                .thenReturn(responseDTO(Status.ACTIVE));
+
+        mockMvc.perform(post("/users").with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.collegeId").value("STU_101"))
+                .andExpect(jsonPath("$.role").value("STUDENT"));
+
+        verify(userService).createUser(
+                argThat(d -> d.getCollegeId().equals("STU_101")),
+                eq("ADMIN_001")
+        );
+    }
+
+    @Test
+    @WithMockUser(username = "ADMIN_001", roles = "ADMIN")
+    void createUser_invalidDTO() throws Exception {
+
+        CreateUserDTO dto = new CreateUserDTO();
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+
+        verify(userService, never()).createUser(any(), any());
+    }
+
+    @Test
+    @WithMockUser(username = "STU_001", roles = "STUDENT")
+    void createUser_forbidden() throws Exception {
+
+        mockMvc.perform(post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validCreateDTO())))
+                .andExpect(status().isForbidden());
+
+        verify(userService, never()).createUser(any(), any());
+    }
+
+    // =====================================================
+    // 🔴 GET USERS
+    // =====================================================
+
+    @Test
+    @WithMockUser(username = "ADMIN_001", roles = "ADMIN")
+    void getUsers_success() throws Exception {
+
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk());
+
+        verify(userService).getAllUsers("ADMIN_001");
+    }
+
+    @Test
+    void getUsers_unauthorized() throws Exception {
+
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    // =====================================================
+    // 🔴 DEACTIVATE USER
+    // =====================================================
+
+    @Test
+    @WithMockUser(username = "ADMIN_001", roles = "ADMIN")
+    void deactivateUser_success() throws Exception {
+
+        when(userService.deactivateUser(any(), any()))
+                .thenReturn(responseDTO(Status.INACTIVE));
+        System.out.println(userService.getClass());
+        mockMvc.perform(put("/users/STU_101/deactivate").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("INACTIVE"));
+
+        verify(userService).deactivateUser("STU_101", "ADMIN_001");
+    }
+
+    @Test
+    @WithMockUser(username = "ADMIN_001", roles = "ADMIN")
+    void deactivateUser_notFound() throws Exception {
+
+        when(userService.deactivateUser(any(), any()))
+                .thenThrow(new ResourceNotFoundException("User not found"));
+
+        mockMvc.perform(put("/users/STU_101/deactivate").with(csrf()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = "STU_001", roles = "STUDENT")
+    void deactivateUser_forbidden() throws Exception {
+
+        mockMvc.perform(put("/users/STU_101/deactivate"))
+                .andExpect(status().isForbidden());
+
+        verify(userService, never()).deactivateUser(any(), any());
+    }
+
+    // =====================================================
+    // 🟢 REACTIVATE USER
+    // =====================================================
+
+    @Test
+    @WithMockUser(username = "ADMIN_001", roles = "ADMIN")
+    void reactivateUser_success() throws Exception {
+
+        when(userService.reactivateUser(any(), any()))
+                .thenReturn(responseDTO(Status.ACTIVE));
+
+        mockMvc.perform(put("/users/STU_101/reactivate"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+
+        verify(userService).reactivateUser("STU_101", "ADMIN_001");
+    }
+
+    @Test
+    @WithMockUser(username = "STU_001", roles = "STUDENT")
+    void reactivateUser_forbidden() throws Exception {
+
+        mockMvc.perform(put("/users/STU_101/reactivate"))
+                .andExpect(status().isForbidden());
+
+        verify(userService, never()).reactivateUser(any(), any());
+    }
+}

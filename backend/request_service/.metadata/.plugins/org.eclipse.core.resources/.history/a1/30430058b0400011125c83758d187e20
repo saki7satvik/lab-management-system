@@ -1,0 +1,65 @@
+package com.request_service.entity;
+
+package com.labmanagement.requestservice.entity;
+
+import com.labmanagement.requestservice.enums.RequestStatus;
+import com.labmanagement.requestservice.enums.TargetType;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@Table(name = "requests")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Request {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    // External reference → User Service (collegeId)
+    @Column(nullable = false)
+    private String createdBy;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TargetType targetType;
+
+    // Can be userId or groupId
+    @Column(nullable = false)
+    private String targetId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RequestStatus status;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    // Internal relationship (allowed)
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RequestItem> items;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = RequestStatus.PENDING;
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+}

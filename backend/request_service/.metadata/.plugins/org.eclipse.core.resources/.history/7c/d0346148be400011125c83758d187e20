@@ -1,0 +1,63 @@
+package com.request_service.service.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.request_service.dto.request.ApproveRequestDTO;
+import com.request_service.dto.request.CreateRequestDTO;
+import com.request_service.dto.response.RequestResponseDTO;
+import com.request_service.repository.RequestRepository;
+import com.request_service.service.InventoryClient;
+import com.request_service.service.RequestService;
+import com.request_service.service.UserClient;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class RequestServiceImpl implements RequestService{
+	
+	private final RequestRepository requestRepository;
+	
+	// External clients (you'll implement using RestTemplate/WebClient)
+    private final UserClient userClient;
+    private final InventoryClient inventoryClient;
+    
+	@Override
+	public RequestResponseDTO createRequest(CreateRequestDTO dto, String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RequestResponseDTO getRequestById(String requestId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<RequestResponseDTO> getRequestsByUser(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<RequestResponseDTO> getAllRequests() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RequestResponseDTO approveRequest(String requestId, ApproveRequestDTO dto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RequestResponseDTO rejectRequest(String requestId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="CustomAuthenticationEntryPointTest" project="user_service" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.user_service.security.CustomAuthenticationEntryPointTest" time="0.0" displayname="CustomAuthenticationEntryPointTest" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.CustomAuthenticationEntryPointTest]">
+    <testcase name="commence_shouldReturn401" classname="com.user_service.security.CustomAuthenticationEntryPointTest" time="0.0" displayname="commence_shouldReturn401()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.CustomAuthenticationEntryPointTest]/[method:commence_shouldReturn401()]"/>
+  </testsuite>
+</testrun>

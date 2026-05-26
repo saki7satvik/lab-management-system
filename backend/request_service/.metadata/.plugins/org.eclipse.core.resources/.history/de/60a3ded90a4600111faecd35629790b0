@@ -1,0 +1,22 @@
+package com.request_service.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+@FeignClient(name = "INVENTORY-SERVICE")
+public interface InventoryClient {
+
+    @PostMapping("/components/validate")
+    Map<String, Boolean> validateComponents(
+        @RequestBody List<String> componentIds
+    );
+
+    @PostMapping("/components/availability")
+    Map<String, Integer> getAvailableQuantities(
+        @RequestBody List<String> componentIds
+    );
+}

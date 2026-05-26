@@ -1,0 +1,645 @@
+package com.inventory_service.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import org.springframework.context.annotation.Import;
+
+import org.springframework.http.MediaType;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.inventory_service.config.TestSecurityConfig;
+import com.inventory_service.dto.UpdateStockDTO;
+import com.inventory_service.dto.request.BulkStockUpdateDTO;
+import com.inventory_service.dto.request.CreateComponentDTO;
+import com.inventory_service.dto.request.StockUpdateItemDTO;
+
+import com.inventory_service.dto.response.ComponentResponseDTO;
+import com.inventory_service.dto.response.CurrentUser;
+import com.inventory_service.dto.response.StockUpdateResponseDTO;
+
+import com.inventory_service.enums.Role;
+import com.inventory_service.enums.Status;
+
+import com.inventory_service.service.InventoryService;
+
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+@WebMvcTest(InventoryController.class)
+@Import(TestSecurityConfig.class)
+class InventoryControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private InventoryService inventoryService;
+
+    // =====================================================
+    // TEST DATA FACTORY
+    // =====================================================
+
+    private UsernamePasswordAuthenticationToken mockAuth(
+            Role role
+    ) {
+
+        CurrentUser currentUser =
+                new CurrentUser(
+                        "INS_001",
+                        role,
+                        Status.ACTIVE
+                );
+
+        return new UsernamePasswordAuthenticationToken(
+                currentUser,
+                null,
+                List.of(
+                        new SimpleGrantedAuthority(
+                                "ROLE_" + role.name()
+                        )
+                )
+        );
+    }
+
+    private CreateComponentDTO validCreateDTO() {
+
+        CreateComponentDTO dto =
+                new CreateComponentDTO();
+
+        dto.setName("ESP32");
+        dto.setDescription("Microcontroller");
+        dto.setTotalQuantity(10);
+
+        return dto;
+    }
+
+    private UpdateStockDTO validUpdateDTO() {
+
+        UpdateStockDTO dto =
+                new UpdateStockDTO();
+
+        dto.setComponentId("COMP_001");
+        dto.setQuantity(5);
+
+        return dto;
+    }
+
+    private BulkStockUpdateDTO validBulkDTO() {
+
+        StockUpdateItemDTO item =
+                new StockUpdateItemDTO();
+
+        item.setComponentId("COMP_001");
+        item.setQuantity(2);
+
+        BulkStockUpdateDTO dto =
+                new BulkStockUpdateDTO();
+
+        dto.setItems(List.of(item));
+
+        return dto;
+    }
+
+    private ComponentResponseDTO responseDTO() {
+
+        return ComponentResponseDTO.builder()
+                .id("COMP_001")
+                .name("ESP32")
+                .description("Microcontroller")
+                .totalQuantity(10)
+                .availableQuantity(8)
+                .build();
+    }
+
+    // =====================================================
+    // CREATE COMPONENT
+    // =====================================================
+
+    @Test
+    void createComponent_success() throws Exception {
+
+        when(inventoryService.createComponent(any(), any()))
+                .thenReturn(responseDTO());
+
+        mockMvc.perform(
+                post("/components")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.INSTRUCTOR)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validCreateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$.id")
+                        .value("COMP_001")
+        )
+        .andExpect(
+                jsonPath("$.name")
+                        .value("ESP32")
+        );
+
+        verify(inventoryService)
+                .createComponent(any(), any());
+    }
+
+    @Test
+    void createComponent_forbidden() throws Exception {
+
+        mockMvc.perform(
+                post("/components")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validCreateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isForbidden());
+
+        verify(inventoryService, never())
+                .createComponent(any(), any());
+    }
+
+    @Test
+    void createComponent_unauthorized() throws Exception {
+
+        mockMvc.perform(
+                post("/components")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validCreateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isUnauthorized());
+
+        verify(inventoryService, never())
+                .createComponent(any(), any());
+    }
+
+    @Test
+    void createComponent_invalidDTO() throws Exception {
+
+        CreateComponentDTO dto =
+                new CreateComponentDTO();
+
+        mockMvc.perform(
+                post("/components")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.INSTRUCTOR)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(dto)
+                        )
+        )
+        .andExpect(status().isBadRequest());
+
+        verify(inventoryService, never())
+                .createComponent(any(), any());
+    }
+
+    // =====================================================
+    // INCREASE STOCK
+    // =====================================================
+
+    @Test
+    void increaseStock_success() throws Exception {
+
+        when(inventoryService.increaseStock(any(), any()))
+                .thenReturn(responseDTO());
+
+        mockMvc.perform(
+                put("/components/increase")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.INSTRUCTOR)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validUpdateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isOk());
+
+        verify(inventoryService)
+                .increaseStock(any(), any());
+    }
+
+    @Test
+    void increaseStock_forbidden() throws Exception {
+
+        mockMvc.perform(
+                put("/components/increase")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validUpdateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isForbidden());
+
+        verify(inventoryService, never())
+                .increaseStock(any(), any());
+    }
+
+    @Test
+    void increaseStock_unauthorized() throws Exception {
+
+        mockMvc.perform(
+                put("/components/increase")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validUpdateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isUnauthorized());
+
+        verify(inventoryService, never())
+                .increaseStock(any(), any());
+    }
+
+    // =====================================================
+    // REDUCE STOCK
+    // =====================================================
+
+    @Test
+    void reduceStock_success() throws Exception {
+
+        when(inventoryService.reduceStock(any(), any()))
+                .thenReturn(responseDTO());
+
+        mockMvc.perform(
+                put("/components/reduce")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.INSTRUCTOR)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validUpdateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isOk());
+
+        verify(inventoryService)
+                .reduceStock(any(), any());
+    }
+
+    @Test
+    void reduceStock_forbidden() throws Exception {
+
+        mockMvc.perform(
+                put("/components/reduce")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validUpdateDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isForbidden());
+
+        verify(inventoryService, never())
+                .reduceStock(any(), any());
+    }
+
+    // =====================================================
+    // GET ALL COMPONENTS
+    // =====================================================
+
+    @Test
+    void getAllComponents_success() throws Exception {
+
+        when(inventoryService.getAllComponents())
+                .thenReturn(
+                        List.of(responseDTO())
+                );
+
+        mockMvc.perform(
+                get("/components")
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$[0].id")
+                        .value("COMP_001")
+        )
+        .andExpect(
+                jsonPath("$[0].name")
+                        .value("ESP32")
+        );
+
+        verify(inventoryService)
+                .getAllComponents();
+    }
+
+    @Test
+    void getAllComponents_unauthorized() throws Exception {
+
+        mockMvc.perform(
+                get("/components")
+        )
+        .andExpect(status().isUnauthorized());
+
+        verify(inventoryService, never())
+                .getAllComponents();
+    }
+
+    // =====================================================
+    // GET COMPONENT BY ID
+    // =====================================================
+
+    @Test
+    void getComponentById_success() throws Exception {
+
+        when(inventoryService.getComponentById("COMP_001"))
+                .thenReturn(responseDTO());
+
+        mockMvc.perform(
+                get("/components/COMP_001")
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$.id")
+                        .value("COMP_001")
+        );
+
+        verify(inventoryService)
+                .getComponentById("COMP_001");
+    }
+
+    @Test
+    void getComponentById_unauthorized() throws Exception {
+
+        mockMvc.perform(
+                get("/components/COMP_001")
+        )
+        .andExpect(status().isUnauthorized());
+
+        verify(inventoryService, never())
+                .getComponentById(any());
+    }
+
+    // =====================================================
+    // VALIDATE COMPONENTS
+    // =====================================================
+
+    @Test
+    void validateComponents_success() throws Exception {
+
+        when(inventoryService.validateComponents(
+                List.of("COMP_001")
+        )).thenReturn(
+                Map.of("COMP_001", true)
+        );
+
+        mockMvc.perform(
+                post("/components/validate")
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        List.of("COMP_001")
+                                )
+                        )
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$.COMP_001")
+                        .value(true)
+        );
+
+        verify(inventoryService)
+                .validateComponents(
+                        List.of("COMP_001")
+                );
+    }
+
+    // =====================================================
+    // GET AVAILABILITY
+    // =====================================================
+
+    @Test
+    void getAvailableQuantities_success() throws Exception {
+
+        when(inventoryService.getAvailableQuantities(
+                List.of("COMP_001")
+        )).thenReturn(
+                Map.of("COMP_001", 5)
+        );
+
+        mockMvc.perform(
+                post("/components/availability")
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        List.of("COMP_001")
+                                )
+                        )
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$.COMP_001")
+                        .value(5)
+        );
+
+        verify(inventoryService)
+                .getAvailableQuantities(
+                        List.of("COMP_001")
+                );
+    }
+
+    // =====================================================
+    // DEDUCT STOCK
+    // =====================================================
+
+    @Test
+    void deductStock_success() throws Exception {
+
+        StockUpdateResponseDTO response =
+                new StockUpdateResponseDTO(
+                        "COMP_001",
+                        2,
+                        6
+                );
+
+        when(inventoryService.deductStock(any(), any()))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(
+                post("/components/deduct")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.INSTRUCTOR)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validBulkDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$[0].componentId")
+                        .value("COMP_001")
+        );
+
+        verify(inventoryService)
+                .deductStock(any(), any());
+    }
+
+    @Test
+    void deductStock_forbidden() throws Exception {
+
+        mockMvc.perform(
+                post("/components/deduct")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validBulkDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isForbidden());
+
+        verify(inventoryService, never())
+                .deductStock(any(), any());
+    }
+
+    // =====================================================
+    // ADD BACK STOCK
+    // =====================================================
+
+    @Test
+    void addBackStock_success() throws Exception {
+
+        StockUpdateResponseDTO response =
+                new StockUpdateResponseDTO(
+                        "COMP_001",
+                        2,
+                        8
+                );
+
+        when(inventoryService.addBackStock(any(), any()))
+                .thenReturn(List.of(response));
+
+        mockMvc.perform(
+                post("/components/add-back")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.INSTRUCTOR)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validBulkDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isOk())
+        .andExpect(
+                jsonPath("$[0].componentId")
+                        .value("COMP_001")
+        );
+
+        verify(inventoryService)
+                .addBackStock(any(), any());
+    }
+
+    @Test
+    void addBackStock_forbidden() throws Exception {
+
+        mockMvc.perform(
+                post("/components/add-back")
+                        .with(csrf())
+                        .with(authentication(
+                                mockAuth(Role.STUDENT)
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                objectMapper.writeValueAsString(
+                                        validBulkDTO()
+                                )
+                        )
+        )
+        .andExpect(status().isForbidden());
+
+        verify(inventoryService, never())
+                .addBackStock(any(), any());
+    }
+}

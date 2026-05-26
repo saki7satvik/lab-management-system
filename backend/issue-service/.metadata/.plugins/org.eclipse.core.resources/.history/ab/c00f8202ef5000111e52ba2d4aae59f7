@@ -1,0 +1,89 @@
+package com.issue_service.service;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.issue_service.dto.response.CurrentUser;
+import com.issue_service.dto.response.RequestItemResponseDTO;
+import com.issue_service.dto.response.RequestResponseDTO;
+import com.issue_service.enums.Role;
+import com.issue_service.enums.Status;
+import com.issue_service.service.impl.IssueServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class IssueComponentServiceTests {
+	@Mock
+	private InventoryClient inventoryClient;
+	
+	@Mock
+	private RequestClient requestClient;
+	
+	@InjectMocks
+	private IssueServiceImpl issueService;
+	
+	private CurrentUser instructorUser;
+	private CurrentUser studentUser;
+	private CurrentUser inactiveInstructor;
+	
+	private RequestItemResponseDTO requestItem1;
+	private RequestItemResponseDTO requestItem2;
+
+	private RequestResponseDTO requestResponse;
+	
+	@BeforeEach
+	void setUp() {
+
+	    instructorUser = CurrentUser.builder()
+	            .id("INS_001")
+	            .role(Role.INSTRUCTOR)
+	            .status(Status.ACTIVE)
+	            .build();
+
+	    inactiveInstructor = CurrentUser.builder()
+	            .id("INS_002")
+	            .role(Role.INSTRUCTOR)
+	            .status(Status.INACTIVE)
+	            .build();
+
+	    studentUser = CurrentUser.builder()
+	            .id("STU_001")
+	            .role(Role.STUDENT)
+	            .status(Status.ACTIVE)
+	            .build();
+
+	    requestItem1 = RequestItemResponseDTO.builder()
+	            .requestItemId("REQ_ITEM_1")
+	            .componentId("COMP_1")
+	            .quantityApproved(5)
+	            .build();
+
+	    requestItem2 = RequestItemResponseDTO.builder()
+	            .requestItemId("REQ_ITEM_2")
+	            .componentId("COMP_2")
+	            .quantityApproved(3)
+	            .build();
+
+	    requestResponse = RequestResponseDTO.builder()
+	            .id("REQ_001")
+	            .createdBy("STU_001")
+	            .status(RequestStatus.APPROVED)
+	            .items(List.of(requestItem1, requestItem2))
+	            .build();
+	}
+}

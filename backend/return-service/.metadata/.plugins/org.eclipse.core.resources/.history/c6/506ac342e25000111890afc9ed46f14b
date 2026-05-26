@@ -1,0 +1,15 @@
+package com.return_service.dto.external;
+
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class IssueResponseDTO {
+
+    private String IssueId;
+    private String requestId;
+    private String issuedBy;
+    private String status;
+
+    private List<IssueItemDTO> items;
+}

@@ -1,0 +1,46 @@
+package com.user_service;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.entity.User;
+import com.user_service.enums.Role;
+import com.user_service.enums.Status;
+import com.user_service.repository.UserRepository;
+import com.user_service.service.impl.UserServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceGetMethodTests {
+	@Mock
+	private UserRepository userRepository;
+	
+	@InjectMocks
+	private UserServiceImpl userService;
+	
+	// ========================================================
+		// TEST DATA FACTORY
+		// ========================================================
+		static class TestDataFactory{
+			
+			static CreateUserDTO createUserDTO(Role role) {
+				return new CreateUserDTO(
+						"Test User",
+						"SampleID_001",
+						"test" + System.nanoTime() + "@mail.com",
+						"9090909090",
+						role
+						);
+			}
+			
+			static User creator(Role role, Status status) {
+				User user = new User();
+				user.setCollegeId("Creator_" + role);
+				user.setRole(role);
+				user.setStatus(status);
+				return user;
+			}
+		}
+}

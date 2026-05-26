@@ -1,0 +1,22 @@
+package com.return_service.dto;
+
+import com.return_service.enums.ItemCondition;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class ReturnItemResponseDTO {
+
+    private String id;
+    private String requestItemId;
+    private String componentId;
+
+    private int quantityReturned;
+
+    private ItemCondition condition;
+
+    private String damageRemarks;
+
+    private boolean processed;
+}

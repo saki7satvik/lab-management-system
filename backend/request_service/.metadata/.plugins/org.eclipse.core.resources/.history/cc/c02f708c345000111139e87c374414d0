@@ -1,0 +1,134 @@
+package com.request_service.controller;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.request_service.config.SecurityConfig;
+import com.request_service.dto.request.CreateRequestDTO;
+import com.request_service.dto.request.RequestItemDTO;
+import com.request_service.dto.response.CurrentUser;
+import com.request_service.dto.response.RequestResponseDTO;
+import com.request_service.enums.Role;
+import com.request_service.enums.Status;
+import com.request_service.enums.TargetType;
+import com.request_service.security.CustomAccessDeniedHandler;
+import com.request_service.security.CustomAuthenticationEntryPoint;
+import com.request_service.security.JwtFilter;
+import com.request_service.security.JwtUtil;
+import com.request_service.service.RequestService;
+
+@WebMvcTest(RequestController.class)
+@Import({
+    SecurityConfig.class,
+    JwtFilter.class,
+    JwtUtil.class,
+    CustomAccessDeniedHandler.class,
+    CustomAuthenticationEntryPoint.class
+})
+public class RequestControllerTests {
+	
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@MockitoBean
+	private RequestService requestService;
+
+	@MockitoBean
+	private JwtUtil jwtUtil;
+	
+	private String instructorToken;
+	private String studentToken;
+	
+	
+	@BeforeEach
+	void setUp() {
+
+	    instructorToken = "Bearer instructor-token";
+	    studentToken = "Bearer student-token";
+	}
+	
+	private void mockStudentJwt() {
+
+	    when(jwtUtil.extractCollegeId("student-token"))
+	            .thenReturn("STU_001");
+
+	    when(jwtUtil.extractRole("student-token"))
+	            .thenReturn(Role.STUDENT);
+
+	    when(jwtUtil.extractStatus("student-token"))
+	            .thenReturn(Status.ACTIVE);
+
+	    when(jwtUtil.isTokenValid("student-token"))
+	            .thenReturn(true);
+	}
+	
+	private void mockInstructorJwt() {
+
+	    when(jwtUtil.extractCollegeId("instructor-token"))
+	            .thenReturn("INS_001");
+
+	    when(jwtUtil.extractRole("instructor-token"))
+	            .thenReturn(Role.INSTRUCTOR);
+
+	    when(jwtUtil.extractStatus("instructor-token"))
+	            .thenReturn(Status.ACTIVE);
+
+	    when(jwtUtil.isTokenValid("instructor-token"))
+	            .thenReturn(true);
+	}
+	
+	@Test
+	void createRequest_success() throws Exception {
+
+	    CreateRequestDTO dto = CreateRequestDTO.builder()
+	            .targetType(TargetType.INDIVIDUAL)
+	            .targetId("STU_001")
+	            .items(List.of(
+	                    new RequestItemDTO("COMP_1", 2)
+	            ))
+	            .build();
+
+	    RequestResponseDTO response =
+	            RequestResponseDTO.builder()
+	                    .id("REQ_1")
+	                    .build();
+
+	    mockStudentJwt();
+
+	    when(requestService.createRequest(
+	            any(CreateRequestDTO.class),
+	            any(CurrentUser.class)
+	    )).thenReturn(response);
+
+	    mockMvc.perform(post("/requests")
+	                    .header("Authorization", studentToken)
+	                    .contentType(MediaType.APPLICATION_JSON)
+	                    .content(objectMapper.writeValueAsString(dto)))
+	            .andExpect(Status().isOk())
+	            .andExpect(jsonPath("$.id")
+	                    .value("REQ_1"));
+
+	    verify(requestService)
+	            .createRequest(
+	                    any(CreateRequestDTO.class),
+	                    any(CurrentUser.class)
+	            );
+	}
+
+}

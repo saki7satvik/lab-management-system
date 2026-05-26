@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="IssueComponentServiceTests" project="issue-service" tests="14" started="14" failures="1" errors="1" ignored="0">
+  <testsuite name="com.issue_service.service.IssueComponentServiceTests" time="1.713" displayname="IssueComponentServiceTests" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]">
+    <testcase name="issueComponents_emptyItems" classname="com.issue_service.service.IssueComponentServiceTests" time="1.381" displayname="issueComponents_emptyItems()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_emptyItems()]"/>
+    <testcase name="issueComponents_inventoryUnavailable" classname="com.issue_service.service.IssueComponentServiceTests" time="0.182" displayname="issueComponents_inventoryUnavailable()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_inventoryUnavailable()]"/>
+    <testcase name="issueComponents_invalidQuantity" classname="com.issue_service.service.IssueComponentServiceTests" time="0.009" displayname="issueComponents_invalidQuantity()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_invalidQuantity()]"/>
+    <testcase name="issueComponents_studentForbidden" classname="com.issue_service.service.IssueComponentServiceTests" time="0.016" displayname="issueComponents_studentForbidden()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_studentForbidden()]"/>
+    <testcase name="issueComponents_invalidRequestItem" classname="com.issue_service.service.IssueComponentServiceTests" time="0.005" displayname="issueComponents_invalidRequestItem()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_invalidRequestItem()]"/>
+    <testcase name="issueComponents_partialIssue_success" classname="com.issue_service.service.IssueComponentServiceTests" time="0.028" displayname="issueComponents_partialIssue_success()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_partialIssue_success()]"/>
+    <testcase name="issueComponents_inventoryConflict" classname="com.issue_service.service.IssueComponentServiceTests" time="0.023" displayname="issueComponents_inventoryConflict()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_inventoryConflict()]"/>
+    <testcase name="issueComponents_requestNotFound" classname="com.issue_service.service.IssueComponentServiceTests" time="0.017" displayname="issueComponents_requestNotFound()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_requestNotFound()]"/>
+    <testcase name="issueComponents_inactiveInstructorForbidden" classname="com.issue_service.service.IssueComponentServiceTests" time="0.003" displayname="issueComponents_inactiveInstructorForbidden()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_inactiveInstructorForbidden()]"/>
+    <testcase name="issueComponents_duplicateRequestItem" classname="com.issue_service.service.IssueComponentServiceTests" time="0.005" displayname="issueComponents_duplicateRequestItem()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_duplicateRequestItem()]"/>
+    <testcase name="issueComponents_overIssuance" classname="com.issue_service.service.IssueComponentServiceTests" time="0.018" displayname="issueComponents_overIssuance()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_overIssuance()]">
+      <failure>
+        <expected>class com.issue_service.exception.ConflictException</expected>
+        <actual>class java.lang.NullPointerException</actual>
+        org.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: &lt;com.issue_service.exception.ConflictException&gt; but was: &lt;java.lang.NullPointerException&gt;&#13;
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)&#13;
+	at org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3128)&#13;
+	at com.issue_service.service.IssueComponentServiceTests.issueComponents_overIssuance(IssueComponentServiceTests.java:428)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: java.lang.NullPointerException: Cannot invoke "com.issue_service.entity.Issue.getId()" because "issue" is null&#13;
+	at com.issue_service.service.impl.IssueServiceImpl.mapToResponseDTO(IssueServiceImpl.java:306)&#13;
+	at com.issue_service.service.impl.IssueServiceImpl.issueComponents(IssueServiceImpl.java:221)&#13;
+	at com.issue_service.service.IssueComponentServiceTests.lambda$11(IssueComponentServiceTests.java:430)&#13;
+	at org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)&#13;
+	... 6 more&#13;
+&#13;
+
+      </failure>
+    </testcase>
+    <testcase name="issueComponents_success_fullIssue" classname="com.issue_service.service.IssueComponentServiceTests" time="0.007" displayname="issueComponents_success_fullIssue()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_success_fullIssue()]">
+      <error>com.issue_service.exception.ConflictException: Issuing exceeds approved limit for component&#13;
+	at com.issue_service.service.impl.IssueServiceImpl.issueComponents(IssueServiceImpl.java:145)&#13;
+	at com.issue_service.service.IssueComponentServiceTests.issueComponents_success_fullIssue(IssueComponentServiceTests.java:142)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+    </testcase>
+    <testcase name="issueComponents_requestServiceUnavailable" classname="com.issue_service.service.IssueComponentServiceTests" time="0.006" displayname="issueComponents_requestServiceUnavailable()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_requestServiceUnavailable()]"/>
+    <testcase name="issueComponents_invalidRequestStatus" classname="com.issue_service.service.IssueComponentServiceTests" time="0.004" displayname="issueComponents_invalidRequestStatus()" uniqueid="[engine:junit-jupiter]/[class:com.issue_service.service.IssueComponentServiceTests]/[method:issueComponents_invalidRequestStatus()]"/>
+  </testsuite>
+</testrun>

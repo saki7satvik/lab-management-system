@@ -1,0 +1,18 @@
+package com.user_service;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.user_service.repository.UserRepository;
+import com.user_service.service.impl.UserServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceGetMethodTests {
+	@Mock
+	private UserRepository userRepository;
+	
+	@InjectMocks
+	private UserServiceImpl userService;
+}

@@ -1,0 +1,334 @@
+package com.request_service.service.impl;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import com.request_service.dto.request.ApproveRequestDTO;
+import com.request_service.dto.request.ApproveRequestItemDTO;
+import com.request_service.dto.request.CreateRequestDTO;
+import com.request_service.dto.request.RequestItemDTO;
+import com.request_service.dto.response.RequestItemResponseDTO;
+import com.request_service.dto.response.RequestResponseDTO;
+import com.request_service.entity.Request;
+import com.request_service.entity.RequestItem;
+import com.request_service.enums.RequestItemStatus;
+import com.request_service.enums.RequestStatus;
+import com.request_service.exception.BadRequestException;
+import com.request_service.exception.ConflictException;
+import com.request_service.exception.ResourceNotFoundException;
+import com.request_service.exception.UnauthorizedException;
+import com.request_service.repository.RequestRepository;
+import com.request_service.service.InventoryClient;
+import com.request_service.service.RequestService;
+
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class RequestServiceImpl implements RequestService{
+	
+	private final RequestRepository requestRepository;
+	
+    private final InventoryClient inventoryClient;
+    
+    @Override
+    @Transactional
+    public RequestResponseDTO createRequest(CreateRequestDTO dto, String collegeId) {
+
+        // 🔒 1. Validate items not empty
+        if (dto.getItems() == null || dto.getItems().isEmpty()) {
+            throw new BadRequestException("Request must contain at least one item");
+        }
+
+        // 🔒 2. Extract component IDs
+        List<String> componentIds = dto.getItems()
+                .stream()
+                .map(RequestItemDTO::getComponentId)
+                .toList();
+
+        // 🔒 3. Prevent duplicate components
+        Set<String> uniqueIds = new HashSet<>(componentIds);
+        if (uniqueIds.size() != componentIds.size()) {
+            throw new BadRequestException("Duplicate components in request");
+        }
+
+        // 🔒 4. Validate components via Inventory Service
+        Map<String, Boolean> existenceMap = inventoryClient.validateComponents(componentIds);
+
+        // 🔒 5. Create Request (timestamps + status handled by entity)
+        Request request = Request.builder()
+                .createdBy(collegeId)
+                .targetType(dto.getTargetType())
+                .targetId(dto.getTargetId())
+                .build();
+
+        // 🔒 6. Add items (using helper → ensures bidirectional mapping)
+        for (RequestItemDTO itemDTO : dto.getItems()) {
+
+            // ❌ Component does not exist
+            if (!existenceMap.getOrDefault(itemDTO.getComponentId(), false)) {
+                throw new BadRequestException("Component not found: " + itemDTO.getComponentId());
+            }
+
+            // ❌ Invalid quantity
+            if (itemDTO.getQuantity() <= 0) {
+                throw new BadRequestException("Quantity must be greater than zero");
+            }
+
+            RequestItem item = RequestItem.builder()
+                    .componentId(itemDTO.getComponentId())
+                    .quantityRequested(itemDTO.getQuantity())
+                    .quantityApproved(0)
+                    .status(RequestItemStatus.PENDING)
+                    .build();
+
+            request.addItem(item); // 🔥 critical
+        }
+
+        // 🔒 7. Persist
+        requestRepository.save(request);
+
+        return mapToResponse(request);
+    }
+
+    // =================== GET ===================
+    @Override
+    public RequestResponseDTO getRequestById(String requestId, String currentUserId) {
+
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+
+        // 🔒 Access control
+        if (!request.getCreatedBy().equals(currentUserId)) {
+            // Only owner OR instructor/admin can view
+            if (!isPrivilegedUser()) {
+                throw new UnauthorizedException("Access denied");
+            }
+        }
+
+        return mapToResponse(request);
+    }
+
+    @Override
+    public List<RequestResponseDTO> getRequestsByUser(String targetUserId, String currentUserId) {
+
+        // 🔒 Students can only see their own requests
+        if (!targetUserId.equals(currentUserId) && !isPrivilegedUser()) {
+            throw new UnauthorizedException("Access denied");
+        }
+
+        return requestRepository.findByCreatedBy(targetUserId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<RequestResponseDTO> getAllRequests(String currentUserId) {
+
+        // 🔒 Only admin/instructor allowed
+        if (!isPrivilegedUser()) {
+            throw new UnauthorizedException("Access denied");
+        }
+
+        return requestRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+    
+    // ================= APPROVE =================
+    
+    @Override
+    @Transactional
+    public RequestResponseDTO approveRequest(String requestId,
+                                             ApproveRequestDTO dto,
+                                             String instructorId) {
+
+        // 🔒 1. Fetch request
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+
+        // 🔒 2. Only PENDING allowed
+        if (request.getStatus() != RequestStatus.PENDING) {
+            throw new ConflictException("Request already processed");
+        }
+
+        // 🔒 3. Validate DTO
+        if (dto.getItems() == null || dto.getItems().isEmpty()) {
+            throw new BadRequestException("Approval items cannot be empty");
+        }
+
+        // 🔒 4. Build valid item set (prevent tampering)
+        Map<String, RequestItem> requestItemMap = request.getItems()
+                .stream()
+                .collect(Collectors.toMap(RequestItem::getId, item -> item));
+
+        // 🔒 5. Build approval map (strict validation)
+        Map<String, Integer> approvalMap = new HashMap<>();
+
+        for (ApproveRequestItemDTO input : dto.getItems()) {
+
+            String itemId = input.getRequestItemId();
+            int approvedQty = input.getQuantityApproved();
+
+            // ❌ invalid item id
+            if (!requestItemMap.containsKey(itemId)) {
+                throw new BadRequestException("Invalid request item id: " + itemId);
+            }
+
+            // ❌ duplicate entry
+            if (approvalMap.containsKey(itemId)) {
+                throw new BadRequestException("Duplicate request item in approval: " + itemId);
+            }
+
+            // ❌ invalid quantity
+            if (approvedQty < 0) {
+                throw new BadRequestException("Approved quantity cannot be negative");
+            }
+
+            approvalMap.put(itemId, approvedQty);
+        }
+
+        // 🔒 6. Fetch availability from Inventory
+        List<String> componentIds = request.getItems()
+                .stream()
+                .map(RequestItem::getComponentId)
+                .toList();
+
+        Map<String, Integer> availabilityMap =
+                inventoryClient.getAvailableQuantities(componentIds);
+
+        // 🔒 7. Process items
+        for (RequestItem item : request.getItems()) {
+
+            int requestedQty = item.getQuantityRequested();
+            int approvedQty = approvalMap.getOrDefault(item.getId(), 0);
+            int availableQty = availabilityMap.getOrDefault(item.getComponentId(), 0);
+
+            // ❌ business validations
+            if (approvedQty > requestedQty) {
+                throw new ConflictException("Approved > requested for item: " + item.getId());
+            }
+
+            if (approvedQty > availableQty) {
+                throw new ConflictException("Approved > available stock for component: " + item.getComponentId());
+            }
+
+            // ✅ apply approval
+            item.setQuantityApproved(approvedQty);
+
+            // 🔥 status logic (tight + deterministic)
+            if (approvedQty == 0) {
+                item.setStatus(RequestItemStatus.REJECTED);
+            } else if (approvedQty < requestedQty) {
+                item.setStatus(RequestItemStatus.PARTIAL);
+            } else {
+                item.setStatus(RequestItemStatus.APPROVED);
+            }
+        }
+
+        // 🔒 8. Update request status
+        updateRequestStatus(request);
+
+        return mapToResponse(request);
+    }
+	
+	// ================= REJECT =================
+	
+    @Override
+    @Transactional
+    public RequestResponseDTO rejectRequest(String requestId, String instructorId) {
+
+        // 🔒 1. Fetch request
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+
+        // 🔒 2. Only PENDING allowed
+        if (request.getStatus() != RequestStatus.PENDING) {
+            throw new ConflictException("Request already processed");
+        }
+
+        // 🔒 3. Reject entire request
+        request.setStatus(RequestStatus.REJECTED);
+
+        for (RequestItem item : request.getItems()) {
+            item.setStatus(RequestItemStatus.REJECTED);
+            item.setQuantityApproved(0);
+        }
+
+        return mapToResponse(request);
+    }
+	
+	// ================= HELPER =================
+
+    private void updateRequestStatus(Request request) {
+
+        boolean allApproved = true;
+        boolean anyApproved = false;
+
+        for (RequestItem item : request.getItems()) {
+
+            if (item.getQuantityApproved() == 0) {
+                allApproved = false;
+            } else {
+                anyApproved = true;
+            }
+
+            if (item.getQuantityApproved() < item.getQuantityRequested()) {
+                allApproved = false;
+            }
+        }
+
+        if (allApproved) {
+            request.setStatus(RequestStatus.APPROVED);
+        } else if (anyApproved) {
+            request.setStatus(RequestStatus.PARTIALLY_APPROVED);
+        } else {
+            request.setStatus(RequestStatus.REJECTED);
+        }
+    }
+
+    private RequestResponseDTO mapToResponse(Request request) {
+
+        List<RequestItemResponseDTO> items =
+                request.getItems().stream()
+                        .map(i -> RequestItemResponseDTO.builder()
+                                .id(i.getId())
+                                .componentId(i.getComponentId())
+                                .quantityRequested(i.getQuantityRequested())
+                                .quantityApproved(i.getQuantityApproved())
+                                .status(i.getStatus())
+                                .build())
+                        .toList();
+
+        return RequestResponseDTO.builder()
+                .id(request.getId())
+                .createdBy(request.getCreatedBy())
+                .targetType(request.getTargetType())
+                .targetId(request.getTargetId())
+                .status(request.getStatus())
+                .createdAt(request.getCreatedAt())
+                .updatedAt(request.getUpdatedAt())
+                .items(items)
+                .build();
+    }
+    
+    private boolean isPrivilegedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        return auth.getAuthorities().stream()
+                .anyMatch(a ->
+                        a.getAuthority().equals("ROLE_ADMIN") ||
+                        a.getAuthority().equals("ROLE_INSTRUCTOR")
+                );
+    }
+
+}

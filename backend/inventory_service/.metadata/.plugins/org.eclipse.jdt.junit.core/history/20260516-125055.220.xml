@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="JwtFilterTest" project="inventory_service" tests="4" started="4" failures="0" errors="0" ignored="0">
+  <testsuite name="com.inventory_service.security.JwtFilterTest" time="1.224" displayname="JwtFilterTest" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]">
+    <testcase name="shouldSkip_whenHeaderMissing" classname="com.inventory_service.security.JwtFilterTest" time="1.191" displayname="shouldSkip_whenHeaderMissing()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldSkip_whenHeaderMissing()]"/>
+    <testcase name="shouldSkip_whenHeaderInvalid" classname="com.inventory_service.security.JwtFilterTest" time="0.006" displayname="shouldSkip_whenHeaderInvalid()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldSkip_whenHeaderInvalid()]"/>
+    <testcase name="shouldSkip_whenTokenInvalid" classname="com.inventory_service.security.JwtFilterTest" time="0.013" displayname="shouldSkip_whenTokenInvalid()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldSkip_whenTokenInvalid()]"/>
+    <testcase name="shouldAuthenticate_whenTokenValid" classname="com.inventory_service.security.JwtFilterTest" time="0.011" displayname="shouldAuthenticate_whenTokenValid()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtFilterTest]/[method:shouldAuthenticate_whenTokenValid()]"/>
+  </testsuite>
+</testrun>

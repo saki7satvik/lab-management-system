@@ -1,0 +1,518 @@
+package com.request_service.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.request_service.dto.request.ApproveRequestDTO;
+import com.request_service.dto.request.ApproveRequestItemDTO;
+import com.request_service.dto.response.CurrentUser;
+import com.request_service.dto.response.RequestResponseDTO;
+import com.request_service.entity.Request;
+import com.request_service.entity.RequestItem;
+import com.request_service.enums.RequestItemStatus;
+import com.request_service.enums.RequestStatus;
+import com.request_service.enums.Role;
+import com.request_service.enums.Status;
+import com.request_service.exception.BadRequestException;
+import com.request_service.exception.ConflictException;
+import com.request_service.exception.ResourceNotFoundException;
+import com.request_service.exception.ServiceUnavailableException;
+import com.request_service.exception.UnauthorizedException;
+import com.request_service.repository.RequestRepository;
+import com.request_service.service.impl.RequestServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class ApproveRequestTests {
+	
+	@Mock
+    private RequestRepository requestRepository;
+
+    @Mock
+    private InventoryClient inventoryClient;
+
+    @InjectMocks
+    private RequestServiceImpl requestService;
+    
+    private CurrentUser instructorUser;
+    private CurrentUser studentUser;
+
+    private Request request;
+    private RequestItem item1;
+    private RequestItem item2;
+    
+    @BeforeEach
+    void setUp() {
+
+        instructorUser = CurrentUser.builder()
+                .id("INS_001")
+                .role(Role.INSTRUCTOR)
+                .status(Status.ACTIVE)
+                .build();
+
+        studentUser = CurrentUser.builder()
+                .id("STU_001")
+                .role(Role.STUDENT)
+                .status(Status.ACTIVE)
+                .build();
+
+        item1 = RequestItem.builder()
+                .id("ITEM_1")
+                .componentId("COMP_1")
+                .quantityRequested(5)
+                .quantityApproved(0)
+                .status(RequestItemStatus.PENDING)
+                .build();
+
+        item2 = RequestItem.builder()
+                .id("ITEM_2")
+                .componentId("COMP_2")
+                .quantityRequested(3)
+                .quantityApproved(0)
+                .status(RequestItemStatus.PENDING)
+                .build();
+
+        request = Request.builder()
+                .id("REQ_1")
+                .createdBy("STU_001")
+                .status(RequestStatus.PENDING)
+                .items(new ArrayList<>(List.of(item1, item2)))
+                .build();
+    }
+    
+    @Test
+    void approveRequest_fullApproval_success() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO("ITEM_1", 5),
+                        new ApproveRequestItemDTO("ITEM_2", 3)
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        when(inventoryClient.getAvailableQuantities(anyList()))
+                .thenReturn(Map.of(
+                        "COMP_1", 10,
+                        "COMP_2", 10
+                ));
+
+        RequestResponseDTO response =
+                requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                );
+
+        assertNotNull(response);
+
+        assertEquals(RequestItemStatus.APPROVED,
+                item1.getStatus());
+
+        assertEquals(RequestItemStatus.APPROVED,
+                item2.getStatus());
+
+        assertEquals(5, item1.getQuantityApproved());
+        assertEquals(3, item2.getQuantityApproved());
+    }
+    
+    @Test
+    void approveRequest_partialApproval_success() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO("ITEM_1", 2)
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        when(inventoryClient.getAvailableQuantities(anyList()))
+                .thenReturn(Map.of(
+                        "COMP_1", 10,
+                        "COMP_2", 10
+                ));
+
+        requestService.approveRequest(
+                "REQ_1",
+                dto,
+                instructorUser
+        );
+
+        assertEquals(RequestItemStatus.PARTIAL,
+                item1.getStatus());
+
+        assertEquals(2,
+                item1.getQuantityApproved());
+
+        // default reject
+        assertEquals(RequestItemStatus.REJECTED,
+                item2.getStatus());
+
+        assertEquals(0,
+                item2.getQuantityApproved());
+    }
+    
+    @Test
+    void approveRequest_zeroApproval_rejected() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO("ITEM_1", 0)
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        when(inventoryClient.getAvailableQuantities(anyList()))
+                .thenReturn(Map.of(
+                        "COMP_1", 10,
+                        "COMP_2", 10
+                ));
+
+        requestService.approveRequest(
+                "REQ_1",
+                dto,
+                instructorUser
+        );
+
+        assertEquals(RequestItemStatus.REJECTED,
+                item1.getStatus());
+    }
+    
+    @Test
+    void approveRequest_studentForbidden() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of())
+                .build();
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        studentUser
+                )
+        );
+
+        verify(requestRepository, never())
+                .findById(any());
+    }
+    
+    @Test
+    void approveRequest_inactiveInstructorForbidden() {
+
+        CurrentUser inactiveInstructor =
+                CurrentUser.builder()
+                        .id("INS_001")
+                        .role(Role.INSTRUCTOR)
+                        .status(Status.INACTIVE)
+                        .build();
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of())
+                .build();
+
+        assertThrows(
+                UnauthorizedException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        inactiveInstructor
+                )
+        );
+
+        verify(requestRepository, never())
+                .findById(any());
+    }
+    
+    @Test
+    void approveRequest_emptyItems() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of())
+                .build();
+
+        assertThrows(
+                BadRequestException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_tooManyItems() {
+
+        List<ApproveRequestItemDTO> items =
+                new ArrayList<>();
+
+        for (int i = 0; i < 51; i++) {
+            items.add(
+                    new ApproveRequestItemDTO(
+                            "ITEM_" + i,
+                            1
+                    )
+            );
+        }
+
+        ApproveRequestDTO dto =
+                ApproveRequestDTO.builder()
+                        .items(items)
+                        .build();
+
+        assertThrows(
+                BadRequestException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_notFound() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                1
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.empty());
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_alreadyProcessed() {
+
+        request.setStatus(RequestStatus.APPROVED);
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                1
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        assertThrows(
+                ConflictException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_invalidRequestItem() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "INVALID",
+                                1
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        assertThrows(
+                BadRequestException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_duplicateApprovalItem() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                1
+                        ),
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                2
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        assertThrows(
+                BadRequestException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_negativeQuantity() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                -1
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        assertThrows(
+                BadRequestException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_inventoryFailure() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                1
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        when(inventoryClient.getAvailableQuantities(anyList()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(
+                ServiceUnavailableException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_approvedGreaterThanRequested() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                10
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        when(inventoryClient.getAvailableQuantities(anyList()))
+                .thenReturn(Map.of(
+                        "COMP_1", 20
+                ));
+
+        assertThrows(
+                ConflictException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+    
+    @Test
+    void approveRequest_approvedGreaterThanAvailable() {
+
+        ApproveRequestDTO dto = ApproveRequestDTO.builder()
+                .items(List.of(
+                        new ApproveRequestItemDTO(
+                                "ITEM_1",
+                                5
+                        )
+                ))
+                .build();
+
+        when(requestRepository.findById("REQ_1"))
+                .thenReturn(Optional.of(request));
+
+        when(inventoryClient.getAvailableQuantities(anyList()))
+                .thenReturn(Map.of(
+                        "COMP_1", 2
+                ));
+
+        assertThrows(
+                ConflictException.class,
+                () -> requestService.approveRequest(
+                        "REQ_1",
+                        dto,
+                        instructorUser
+                )
+        );
+    }
+
+}

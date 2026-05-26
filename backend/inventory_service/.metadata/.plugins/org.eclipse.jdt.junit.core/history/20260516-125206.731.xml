@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="CustomAuthenticationEntryPointTest" project="inventory_service" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.inventory_service.security.CustomAuthenticationEntryPointTest" time="0.104" displayname="CustomAuthenticationEntryPointTest" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.CustomAuthenticationEntryPointTest]">
+    <testcase name="commence_shouldReturn401" classname="com.inventory_service.security.CustomAuthenticationEntryPointTest" time="0.104" displayname="commence_shouldReturn401()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.CustomAuthenticationEntryPointTest]/[method:commence_shouldReturn401()]"/>
+  </testsuite>
+</testrun>

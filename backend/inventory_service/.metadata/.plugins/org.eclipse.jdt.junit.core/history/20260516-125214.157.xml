@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="CustomAccessDeniedHandlerTest" project="inventory_service" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.inventory_service.security.CustomAccessDeniedHandlerTest" time="0.111" displayname="CustomAccessDeniedHandlerTest" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.CustomAccessDeniedHandlerTest]">
+    <testcase name="handle_shouldReturn403" classname="com.inventory_service.security.CustomAccessDeniedHandlerTest" time="0.111" displayname="handle_shouldReturn403()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.CustomAccessDeniedHandlerTest]/[method:handle_shouldReturn403()]"/>
+  </testsuite>
+</testrun>

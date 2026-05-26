@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="CustomAccessDeniedHandlerTest" project="user_service" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.user_service.security.CustomAccessDeniedHandlerTest" time="0.111" displayname="CustomAccessDeniedHandlerTest" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.CustomAccessDeniedHandlerTest]">
+    <testcase name="handle_shouldReturn403" classname="com.user_service.security.CustomAccessDeniedHandlerTest" time="0.111" displayname="handle_shouldReturn403()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.CustomAccessDeniedHandlerTest]/[method:handle_shouldReturn403()]"/>
+  </testsuite>
+</testrun>

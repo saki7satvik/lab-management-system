@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="JwtUtilTest" project="inventory_service" tests="7" started="7" failures="0" errors="0" ignored="0">
+  <testsuite name="com.inventory_service.security.JwtUtilTest" time="0.295" displayname="JwtUtilTest" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]">
+    <testcase name="isTokenValid_invalidToken" classname="com.inventory_service.security.JwtUtilTest" time="0.117" displayname="isTokenValid_invalidToken()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:isTokenValid_invalidToken()]"/>
+    <testcase name="generateToken_success" classname="com.inventory_service.security.JwtUtilTest" time="0.138" displayname="generateToken_success()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:generateToken_success()]"/>
+    <testcase name="isTokenValid_validToken" classname="com.inventory_service.security.JwtUtilTest" time="0.019" displayname="isTokenValid_validToken()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:isTokenValid_validToken()]"/>
+    <testcase name="extractStatus_success" classname="com.inventory_service.security.JwtUtilTest" time="0.005" displayname="extractStatus_success()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:extractStatus_success()]"/>
+    <testcase name="extractCollegeId_success" classname="com.inventory_service.security.JwtUtilTest" time="0.004" displayname="extractCollegeId_success()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:extractCollegeId_success()]"/>
+    <testcase name="extractClaims_invalidToken" classname="com.inventory_service.security.JwtUtilTest" time="0.003" displayname="extractClaims_invalidToken()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:extractClaims_invalidToken()]"/>
+    <testcase name="extractRole_success" classname="com.inventory_service.security.JwtUtilTest" time="0.004" displayname="extractRole_success()" uniqueid="[engine:junit-jupiter]/[class:com.inventory_service.security.JwtUtilTest]/[method:extractRole_success()]"/>
+  </testsuite>
+</testrun>

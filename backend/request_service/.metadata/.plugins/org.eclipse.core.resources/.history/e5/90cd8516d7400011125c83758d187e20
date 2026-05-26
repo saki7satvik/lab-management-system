@@ -1,0 +1,44 @@
+# ===============================
+# APPLICATION
+# ===============================
+spring.application.name=request_service
+server.port=8083
+
+
+# ===============================
+# DATABASE (update if needed)
+# ===============================
+spring.datasource.url=jdbc:mysql://localhost:3306/lab_management_request_db
+spring.datasource.username=root
+spring.datasource.password=saki7
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+
+# ===============================
+# EUREKA DISABLED
+# ===============================
+eureka.client.enabled=false
+spring.cloud.discovery.enabled=false
+
+
+# ===============================
+# EXTERNAL SERVICE URLs
+# ===============================
+services.user-service.url=http://localhost:8081
+services.inventory-service.url=http://localhost:8082
+
+
+## ===============================
+## LOGGING (optional but useful)
+## ===============================
+#logging.level.org.springframework.web=DEBUG
+#logging.level.org.hibernate.SQL=DEBUG
+#
+#
+## ===============================
+## JACKSON (optional)
+## ===============================
+#spring.jackson.serialization.FAIL_ON_EMPTY_BEANS=false

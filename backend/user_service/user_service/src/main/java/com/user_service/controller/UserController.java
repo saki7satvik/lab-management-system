@@ -1,0 +1,123 @@
+package com.user_service.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.dto.CurrentUser;
+import com.user_service.dto.UserResponseDTO;
+import com.user_service.service.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+@RestController
+@RequestMapping("/users")
+@Tag(name = "User Controller", description = "User management APIs")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // 🔥 1. CREATE USER
+    @Operation(summary = "Create a new user")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data"),
+        @ApiResponse(responseCode = "403", description = "Access denied (role restriction)"),
+        @ApiResponse(responseCode = "409", description = "User already exists")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @PostMapping
+    public UserResponseDTO createUser(@Valid @RequestBody CreateUserDTO dto,
+                                      Authentication authentication) {
+    	
+    	CurrentUser currentUser =
+    		    (CurrentUser) authentication.getPrincipal();
+        return userService.createUser(dto, currentUser.getId());
+    }
+
+    // 🔥 2. GET ALL USERS
+    @Operation(summary = "Get all users (filtered by role)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Users fetched successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @GetMapping
+    public List<UserResponseDTO> getAllUsers(Authentication authentication) {
+    	CurrentUser currentUser =
+    		    (CurrentUser) authentication.getPrincipal();
+        return userService.getAllUsers(currentUser.getId());
+    }
+
+    // 🔥 3. GET USER BY COLLEGE ID
+    @Operation(summary = "Get user by college ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User found"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @GetMapping("/{collegeId}")
+    public ResponseEntity<UserResponseDTO> getUserByCollegeId(
+            @PathVariable String collegeId,
+            Authentication authentication) {
+
+    	CurrentUser currentUser =
+    		    (CurrentUser) authentication.getPrincipal();
+
+        return ResponseEntity.ok(
+                userService.getUserByCollegeId(collegeId, currentUser.getId())
+        );
+    }
+
+    // 🔥 4. DEACTIVATE USER
+    @Operation(summary = "Deactivate a user")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User deactivated successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "409", description = "Invalid operation (self-deactivate or already inactive)")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @PutMapping("/{collegeId}/deactivate")
+    public String deactivateUser(@PathVariable String collegeId,
+                                 Authentication authentication) {
+    	CurrentUser currentUser =
+    		    (CurrentUser) authentication.getPrincipal();
+        userService.deactivateUser(collegeId, currentUser.getId());
+        return "User deactivated";
+    }
+
+    // 🔥 5. REACTIVATE USER
+    @Operation(summary = "Reactivate a user")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "User reactivated successfully"),
+        @ApiResponse(responseCode = "403", description = "Access denied"),
+        @ApiResponse(responseCode = "404", description = "User not found"),
+        @ApiResponse(responseCode = "409", description = "User already active or invalid operation")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    @PutMapping("/{collegeId}/reactivate")
+    public ResponseEntity<UserResponseDTO> reactivateUser(
+            @PathVariable String collegeId,
+            Authentication authentication) {
+    	CurrentUser currentUser =
+    		    (CurrentUser) authentication.getPrincipal();
+
+        return ResponseEntity.ok(
+                userService.reactivateUser(collegeId, currentUser.getId())
+        );
+    }
+}

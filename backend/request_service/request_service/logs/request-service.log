@@ -1,0 +1,148 @@
+2026-05-22 10:54:22 [INFO] c.r.RequestServiceApplication - Starting RequestServiceApplication using Java 21.0.10 with PID 9556 (C:\Users\lenovo\Desktop\Presidency\CapG\Project Microservices\request_service\request_service\target\classes started by lenovo in C:\Users\lenovo\Desktop\Presidency\CapG\Project Microservices\request_service\request_service)
+2026-05-22 10:54:22 [INFO] c.r.RequestServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-22 10:54:27 [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-22 10:54:27 [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 155 ms. Found 1 JPA repository interface.
+2026-05-22 10:54:27 [INFO] o.s.cloud.context.scope.GenericScope - BeanFactory id=695f6d6a-395c-3b4d-82e0-0be405e4a4da
+2026-05-22 10:54:29 [INFO] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8083 (http)
+2026-05-22 10:54:29 [INFO] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-22 10:54:29 [INFO] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.53]
+2026-05-22 10:54:29 [INFO] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-22 10:54:29 [INFO] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 6337 ms
+2026-05-22 10:54:29 [WARN] o.s.aop.framework.CglibAopProxy - Unable to proxy interface-implementing method [public final void org.springframework.web.filter.GenericFilterBean.init(jakarta.servlet.FilterConfig) throws jakarta.servlet.ServletException] because it is marked as final, consider using interface-based JDK proxies instead.
+2026-05-22 10:54:30 [INFO] o.s.b.web.servlet.RegistrationBean - Filter jwtFilterRegistration was not registered (disabled)
+2026-05-22 10:54:30 [INFO] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-22 10:54:30 [INFO] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.45.Final
+2026-05-22 10:54:30 [INFO] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-22 10:54:31 [INFO] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-22 10:54:31 [INFO] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-22 10:54:32 [INFO] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1f6d3a81
+2026-05-22 10:54:32 [INFO] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-22 10:54:32 [WARN] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-22 10:54:33 [INFO] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.44
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-22 10:54:36 [INFO] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-22 10:54:36 [INFO] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-22 10:54:38 [WARN] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-22 10:54:38 [INFO] o.s.c.o.FeignClientFactoryBean - For 'INVENTORY-SERVICE' URL not provided. Will try picking an instance via load-balancing.
+2026-05-22 10:54:39 [WARN] o.s.b.a.s.s.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: e73ade9b-4ac4-44f9-b4f3-6904e9dee8c0
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-05-22 10:54:39 [INFO] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-05-22 10:54:41 [INFO] o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2026-05-22 10:54:42 [INFO] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-05-22 10:54:43 [WARN] o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-22 10:54:43 [INFO] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-05-22 10:54:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-05-22 10:54:43 [INFO] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-05-22 10:54:44 [INFO] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-05-22 10:54:44 [INFO] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-05-22 10:54:44 [INFO] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-22 10:54:44 [INFO] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1779427484581 with initial instances count: 2
+2026-05-22 10:54:44 [INFO] o.s.c.n.e.s.EurekaServiceRegistry - Registering application REQUEST-SERVICE with eureka with status UP
+2026-05-22 10:54:44 [INFO] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1779427484600, current=UP, previous=STARTING]
+2026-05-22 10:54:44 [INFO] c.netflix.discovery.DiscoveryClient - DiscoveryClient_REQUEST-SERVICE/satvikkr:request-service:8083: registering service...
+2026-05-22 10:54:44 [INFO] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8083 (http) with context path '/'
+2026-05-22 10:54:44 [INFO] o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8083
+2026-05-22 10:54:44 [INFO] c.netflix.discovery.DiscoveryClient - DiscoveryClient_REQUEST-SERVICE/satvikkr:request-service:8083 - registration status: 204
+2026-05-22 10:54:44 [INFO] c.r.RequestServiceApplication - Started RequestServiceApplication in 22.988 seconds (process running for 24.246)
+2026-05-22 10:59:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:04:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:05:55 [INFO] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-22 11:05:55 [INFO] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-22 11:05:55 [INFO] o.s.web.servlet.DispatcherServlet - Completed initialization in 324 ms
+2026-05-22 11:05:57 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:05:57 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 749 ms
+2026-05-22 11:05:57 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:06:08 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:06:08 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 25 ms
+2026-05-22 11:06:08 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:06:10 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:06:10 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 14 ms
+2026-05-22 11:06:10 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:06:14 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:06:14 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 10 ms
+2026-05-22 11:06:14 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:09:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:12:41 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getMyRequests(Authentication)
+2026-05-22 11:12:41 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser) executed in 120 ms
+2026-05-22 11:12:41 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser)
+2026-05-22 11:13:03 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getMyRequests(Authentication)
+2026-05-22 11:13:03 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser) executed in 13 ms
+2026-05-22 11:13:03 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser)
+2026-05-22 11:13:21 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.createRequest(CreateRequestDTO,Authentication)
+2026-05-22 11:13:22 [INFO] c.r.aop.PerformanceAspect - Map com.request_service.service.InventoryClient.validateComponents(List) executed in 972 ms
+2026-05-22 11:13:22 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: Map com.request_service.service.InventoryClient.validateComponents(List)
+2026-05-22 11:13:22 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.createRequest(CreateRequestDTO,CurrentUser) executed in 1056 ms
+2026-05-22 11:13:22 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.createRequest(CreateRequestDTO,CurrentUser)
+2026-05-22 11:13:22 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getMyRequests(Authentication)
+2026-05-22 11:13:22 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser) executed in 11 ms
+2026-05-22 11:13:22 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser)
+2026-05-22 11:14:38 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:14:38 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 17 ms
+2026-05-22 11:14:38 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:14:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:14:47 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:14:47 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 36 ms
+2026-05-22 11:14:47 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:14:47 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:14:47 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 7 ms
+2026-05-22 11:14:47 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:15:02 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 12 ms
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:15:02 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 9 ms
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.approveRequest(String,ApproveRequestDTO,Authentication)
+2026-05-22 11:15:02 [INFO] c.r.aop.PerformanceAspect - Map com.request_service.service.InventoryClient.getAvailableQuantities(List) executed in 82 ms
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: Map com.request_service.service.InventoryClient.getAvailableQuantities(List)
+2026-05-22 11:15:02 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.InventoryClient.deductStock(BulkStockUpdateDTO) executed in 178 ms
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.InventoryClient.deductStock(BulkStockUpdateDTO)
+2026-05-22 11:15:02 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.approveRequest(String,ApproveRequestDTO,CurrentUser) executed in 285 ms
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.approveRequest(String,ApproveRequestDTO,CurrentUser)
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:15:02 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 14 ms
+2026-05-22 11:15:02 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:15:17 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getMyRequests(Authentication)
+2026-05-22 11:15:17 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser) executed in 16 ms
+2026-05-22 11:15:17 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser)
+2026-05-22 11:15:36 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:15:36 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 18 ms
+2026-05-22 11:15:36 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:15:42 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:15:42 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 7 ms
+2026-05-22 11:15:42 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:15:59 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getAllRequests(Authentication)
+2026-05-22 11:15:59 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser) executed in 14 ms
+2026-05-22 11:15:59 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getAllRequests(CurrentUser)
+2026-05-22 11:16:07 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:16:07 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 11 ms
+2026-05-22 11:16:07 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:16:55 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getRequestById(String,Authentication)
+2026-05-22 11:16:55 [INFO] c.r.aop.PerformanceAspect - RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser) executed in 9 ms
+2026-05-22 11:16:55 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: RequestResponseDTO com.request_service.service.impl.RequestServiceImpl.getRequestById(String,CurrentUser)
+2026-05-22 11:17:37 [INFO] c.request_service.aop.LoggingAspect - ➡️ [CONTROLLER] Entering: ResponseEntity com.request_service.controller.RequestController.getMyRequests(Authentication)
+2026-05-22 11:17:37 [INFO] c.r.aop.PerformanceAspect - List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser) executed in 15 ms
+2026-05-22 11:17:37 [INFO] c.request_service.aop.LoggingAspect - ✅ [SERVICE] Exiting: List com.request_service.service.impl.RequestServiceImpl.getRequestsByUser(String,CurrentUser)
+2026-05-22 11:19:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:24:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:29:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 11:34:43 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-05-22 12:35:13 [WARN] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=57m9s388ms471µs).
+2026-05-22 12:36:28 [INFO] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration

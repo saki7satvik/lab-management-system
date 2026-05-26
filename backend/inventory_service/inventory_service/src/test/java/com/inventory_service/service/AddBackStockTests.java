@@ -1,0 +1,546 @@
+package com.inventory_service.service;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.inventory_service.dto.request.BulkStockUpdateDTO;
+import com.inventory_service.dto.request.StockUpdateItemDTO;
+import com.inventory_service.dto.response.CurrentUser;
+import com.inventory_service.dto.response.StockUpdateResponseDTO;
+import com.inventory_service.entity.Component;
+import com.inventory_service.entity.ComponentHistory;
+import com.inventory_service.enums.ActionType;
+import com.inventory_service.enums.Role;
+import com.inventory_service.enums.Status;
+import com.inventory_service.exception.BadRequestException;
+import com.inventory_service.exception.ConflictException;
+import com.inventory_service.exception.ResourceNotFoundException;
+import com.inventory_service.exception.UnauthorizedException;
+import com.inventory_service.repository.ComponentHistoryRepository;
+import com.inventory_service.repository.InventoryRepository;
+import com.inventory_service.service.impl.InventoryServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+class AddBackStockTests {
+
+    @Mock
+    private InventoryRepository inventoryRepository;
+
+    @Mock
+    private ComponentHistoryRepository componentHistoryRepository;
+
+    @InjectMocks
+    private InventoryServiceImpl inventoryService;
+
+    // =====================================================
+    // TEST DATA FACTORY
+    // =====================================================
+
+    private CurrentUser currentUser(
+            Role role,
+            Status status
+    ) {
+
+        return new CurrentUser(
+                "INS_001",
+                role,
+                status
+        );
+    }
+
+    private Component component(
+            boolean active,
+            int total,
+            int available
+    ) {
+
+        Component component =
+                new Component();
+
+        component.setId("COMP_001");
+
+        component.setName("ESP32");
+
+        component.setTotalQuantity(total);
+        component.setAvailableQuantity(available);
+
+        component.setActive(active);
+
+        return component;
+    }
+
+    private BulkStockUpdateDTO request(
+            int quantity
+    ) {
+
+        StockUpdateItemDTO item =
+                new StockUpdateItemDTO();
+
+        item.setComponentId("COMP_001");
+        item.setQuantity(quantity);
+
+        BulkStockUpdateDTO request =
+                new BulkStockUpdateDTO();
+
+        request.setItems(List.of(item));
+
+        return request;
+    }
+
+    // =====================================================
+    // ADD BACK STOCK TESTS
+    // =====================================================
+
+    @Nested
+    @DisplayName("Add Back Stock Tests")
+    class AddBackStockTestCases {
+
+        @Test
+        @DisplayName("Should add back stock successfully")
+        void addBackStock_success() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            Component component =
+                    component(
+                            true,
+                            10,
+                            5
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            when(inventoryRepository.save(any(Component.class)))
+                    .thenAnswer(
+                            invocation ->
+                                    invocation.getArgument(0)
+                    );
+
+            List<StockUpdateResponseDTO> response =
+                    inventoryService.addBackStock(
+                            request,
+                            currentUser
+                    );
+
+            assertNotNull(response);
+
+            assertEquals(1, response.size());
+
+            StockUpdateResponseDTO dto =
+                    response.get(0);
+
+            assertEquals(
+                    "COMP_001",
+                    dto.getComponentId()
+            );
+
+            assertEquals(
+                    2,
+                    dto.getUpdatedQuantity()
+            );
+
+            assertEquals(
+                    7,
+                    dto.getRemainingQuantity()
+            );
+
+            verify(inventoryRepository)
+                    .save(component);
+
+            verify(componentHistoryRepository)
+                    .save(any(ComponentHistory.class));
+        }
+
+        @Test
+        @DisplayName("Should fail when current user is null")
+        void addBackStock_nullUser() {
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            UnauthorizedException ex =
+                    assertThrows(
+                            UnauthorizedException.class,
+                            () -> inventoryService
+                                    .addBackStock(
+                                            request,
+                                            null
+                                    )
+                    );
+
+            assertEquals(
+                    "User information is missing",
+                    ex.getMessage()
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should deny non instructor")
+        void addBackStock_accessDenied() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.STUDENT,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            assertThrows(
+                    UnauthorizedException.class,
+                    () -> inventoryService
+                            .addBackStock(
+                                    request,
+                                    currentUser
+                            )
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should deny inactive instructor")
+        void addBackStock_inactiveInstructor() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.INACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            assertThrows(
+                    UnauthorizedException.class,
+                    () -> inventoryService
+                            .addBackStock(
+                                    request,
+                                    currentUser
+                            )
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should fail when component not found")
+        void addBackStock_componentNotFound() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.empty());
+
+            ResourceNotFoundException ex =
+                    assertThrows(
+                            ResourceNotFoundException.class,
+                            () -> inventoryService
+                                    .addBackStock(
+                                            request,
+                                            currentUser
+                                    )
+                    );
+
+            assertEquals(
+                    "Component not found",
+                    ex.getMessage()
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should fail when component inactive")
+        void addBackStock_inactiveComponent() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            Component component =
+                    component(
+                            false,
+                            10,
+                            5
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> inventoryService
+                            .addBackStock(
+                                    request,
+                                    currentUser
+                            )
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should fail when quantity is zero")
+        void addBackStock_zeroQuantity() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(0);
+
+            Component component =
+                    component(
+                            true,
+                            10,
+                            5
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            BadRequestException ex =
+                    assertThrows(
+                            BadRequestException.class,
+                            () -> inventoryService
+                                    .addBackStock(
+                                            request,
+                                            currentUser
+                                    )
+                    );
+
+            assertEquals(
+                    "Quantity must be greater than 0",
+                    ex.getMessage()
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should fail when quantity is negative")
+        void addBackStock_negativeQuantity() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(-5);
+
+            Component component =
+                    component(
+                            true,
+                            10,
+                            5
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            assertThrows(
+                    BadRequestException.class,
+                    () -> inventoryService
+                            .addBackStock(
+                                    request,
+                                    currentUser
+                            )
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should fail when available exceeds total")
+        void addBackStock_exceedsTotalQuantity() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(5);
+
+            Component component =
+                    component(
+                            true,
+                            10,
+                            8
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            ConflictException ex =
+                    assertThrows(
+                            ConflictException.class,
+                            () -> inventoryService
+                                    .addBackStock(
+                                            request,
+                                            currentUser
+                                    )
+                    );
+
+            assertEquals(
+                    "Available quantity cannot exceed total quantity",
+                    ex.getMessage()
+            );
+
+            verify(inventoryRepository, never())
+                    .save(any());
+        }
+
+        @Test
+        @DisplayName("Should update updatedBy field")
+        void addBackStock_updatedByValidation() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            Component component =
+                    component(
+                            true,
+                            10,
+                            5
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            when(inventoryRepository.save(any(Component.class)))
+                    .thenAnswer(
+                            invocation ->
+                                    invocation.getArgument(0)
+                    );
+
+            inventoryService.addBackStock(
+                    request,
+                    currentUser
+            );
+
+            assertEquals(
+                    "INS_001",
+                    component.getUpdatedBy()
+            );
+        }
+
+        @Test
+        @DisplayName("Should create history entry")
+        void addBackStock_historyValidation() {
+
+            CurrentUser currentUser =
+                    currentUser(
+                            Role.INSTRUCTOR,
+                            Status.ACTIVE
+                    );
+
+            BulkStockUpdateDTO request =
+                    request(2);
+
+            Component component =
+                    component(
+                            true,
+                            10,
+                            5
+                    );
+
+            when(inventoryRepository.findById("COMP_001"))
+                    .thenReturn(Optional.of(component));
+
+            when(inventoryRepository.save(any(Component.class)))
+                    .thenAnswer(
+                            invocation ->
+                                    invocation.getArgument(0)
+                    );
+
+            inventoryService.addBackStock(
+                    request,
+                    currentUser
+            );
+
+            ArgumentCaptor<ComponentHistory> captor =
+                    ArgumentCaptor.forClass(
+                            ComponentHistory.class
+                    );
+
+            verify(componentHistoryRepository)
+                    .save(captor.capture());
+
+            ComponentHistory history =
+                    captor.getValue();
+
+            assertEquals(
+                    ActionType.ADD_BACK,
+                    history.getAction()
+            );
+
+            assertEquals(
+                    2,
+                    history.getQuantityChanged()
+            );
+
+            assertEquals(
+                    "INS_001",
+                    history.getPerformedBy()
+            );
+        }
+    }
+}

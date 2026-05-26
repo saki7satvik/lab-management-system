@@ -1,0 +1,21 @@
+package com.user_service.dto;
+
+
+import com.user_service.enums.Role;
+import com.user_service.enums.Status;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+@Builder
+public class UserResponseDTO {
+    private String name;
+    private String collegeId;
+    private String email;
+    private String phone;
+    private Role role;
+    private Status status;
+}

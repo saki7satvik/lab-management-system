@@ -1,0 +1,84 @@
+spring.application.name=api-gateway
+
+server.port=8080
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-origins=http://localhost:4200
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-methods=GET,POST,PUT,DELETE,OPTIONS
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allowed-headers=*
+
+spring.cloud.gateway.globalcors.cors-configurations.[/**].allow-credentials=true
+
+spring.cloud.gateway.routes[0].id=user-service
+spring.cloud.gateway.routes[0].uri=lb://USER-SERVICE
+spring.cloud.gateway.routes[0].predicates[0]=Path=/users/**
+
+spring.cloud.gateway.routes[1].id=auth-service
+spring.cloud.gateway.routes[1].uri=lb://USER-SERVICE
+spring.cloud.gateway.routes[1].predicates[0]=Path=/auth/**
+
+spring.cloud.gateway.routes[2].id=inventory-service
+spring.cloud.gateway.routes[2].uri=lb://INVENTORY-SERVICE
+spring.cloud.gateway.routes[2].predicates[0]=Path=/components/**
+
+spring.cloud.gateway.routes[3].id=request-service
+spring.cloud.gateway.routes[3].uri=lb://REQUEST-SERVICE
+spring.cloud.gateway.routes[3].predicates[0]=Path=/requests/**
+
+spring.cloud.gateway.routes[4].id=issue-service
+spring.cloud.gateway.routes[4].uri=lb://ISSUE-SERVICE
+spring.cloud.gateway.routes[4].predicates[0]=Path=/issues/**
+
+spring.cloud.gateway.routes[5].id=return-service
+spring.cloud.gateway.routes[5].uri=lb://RETURN-SERVICE
+spring.cloud.gateway.routes[5].predicates[0]=Path=/returns/**
+
+# USER SWAGGER
+spring.cloud.gateway.routes[6].id=user-swagger
+spring.cloud.gateway.routes[6].uri=lb://USER-SERVICE
+spring.cloud.gateway.routes[6].predicates[0]=Path=/user-service/v3/api-docs
+spring.cloud.gateway.routes[6].filters[0]=RewritePath=/user-service/v3/api-docs, /v3/api-docs
+
+# INVENTORY
+spring.cloud.gateway.routes[7].id=inventory-swagger
+spring.cloud.gateway.routes[7].uri=lb://INVENTORY-SERVICE
+spring.cloud.gateway.routes[7].predicates[0]=Path=/inventory-service/v3/api-docs
+spring.cloud.gateway.routes[7].filters[0]=RewritePath=/inventory-service/v3/api-docs, /v3/api-docs
+
+# REQUEST
+spring.cloud.gateway.routes[8].id=request-swagger
+spring.cloud.gateway.routes[8].uri=lb://REQUEST-SERVICE
+spring.cloud.gateway.routes[8].predicates[0]=Path=/request-service/v3/api-docs
+spring.cloud.gateway.routes[8].filters[0]=RewritePath=/request-service/v3/api-docs, /v3/api-docs
+
+# ISSUE
+spring.cloud.gateway.routes[9].id=issue-swagger
+spring.cloud.gateway.routes[9].uri=lb://ISSUE-SERVICE
+spring.cloud.gateway.routes[9].predicates[0]=Path=/issue-service/v3/api-docs
+spring.cloud.gateway.routes[9].filters[0]=RewritePath=/issue-service/v3/api-docs, /v3/api-docs
+
+# RETURN
+spring.cloud.gateway.routes[10].id=return-swagger
+spring.cloud.gateway.routes[10].uri=lb://RETURN-SERVICE
+spring.cloud.gateway.routes[10].predicates[0]=Path=/return-service/v3/api-docs
+spring.cloud.gateway.routes[10].filters[0]=RewritePath=/return-service/v3/api-docs, /v3/api-docs
+
+springdoc.swagger-ui.urls[0].name=User Service
+springdoc.swagger-ui.urls[0].url=/user-service/v3/api-docs
+
+springdoc.swagger-ui.urls[1].name=Inventory Service
+springdoc.swagger-ui.urls[1].url=/inventory-service/v3/api-docs
+
+springdoc.swagger-ui.urls[2].name=Request Service
+springdoc.swagger-ui.urls[2].url=/request-service/v3/api-docs
+
+springdoc.swagger-ui.urls[3].name=Issue Service
+springdoc.swagger-ui.urls[3].url=/issue-service/v3/api-docs
+
+springdoc.swagger-ui.urls[4].name=Return Service
+springdoc.swagger-ui.urls[4].url=/return-service/v3/api-docs

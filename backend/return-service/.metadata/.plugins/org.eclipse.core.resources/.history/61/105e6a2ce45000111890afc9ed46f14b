@@ -1,0 +1,37 @@
+package com.return_service.service;
+
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.return_service.dto.CurrentUser;
+import com.return_service.dto.external.IssueItemDTO;
+import com.return_service.dto.external.IssueResponseDTO;
+import com.return_service.repository.ReturnRepository;
+import com.return_service.service.impl.ReturnServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class ProcessReturnTests {
+	@Mock
+	private ReturnRepository returnRepository;
+	
+	@Mock
+	private InventoryClient inventoryClient;
+	
+	@Mock
+	private IssueClient issueClient;
+	
+	@InjectMocks
+	private ReturnServiceImpl returnService;
+	
+	private CurrentUser instructorUser;
+	private CurrentUser studentUser;
+	private CurrentUser inactiveInstructor;
+
+	private IssueResponseDTO issue;
+	private IssueItemDTO issueItem1;
+	private IssueItemDTO issueItem2;
+	
+
+}

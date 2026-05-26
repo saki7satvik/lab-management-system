@@ -1,0 +1,37 @@
+package com.issue_service.service;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.issue_service.dto.response.CurrentUser;
+import com.issue_service.service.impl.IssueServiceImpl;
+
+@ExtendWith(MockitoExtension.class)
+public class IssueComponentServiceTests {
+	@Mock
+	private InventoryClient inventoryClient;
+	
+	@Mock
+	private RequestClient requestClient;
+	
+	@InjectMocks
+	private IssueServiceImpl issueService;
+	
+	private CurrentUser currentUser;
+}

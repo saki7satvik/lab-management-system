@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="ReturnControllerTests" project="return-service" tests="10" started="10" failures="3" errors="0" ignored="0">
+  <testsuite name="com.return_service.controller.ReturnControllerTests" time="0.551" displayname="ReturnControllerTests" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]">
+    <testcase name="getReturnById_notFound" classname="com.return_service.controller.ReturnControllerTests" time="0.321" displayname="getReturnById_notFound()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:getReturnById_notFound()]"/>
+    <testcase name="getReturns_success" classname="com.return_service.controller.ReturnControllerTests" time="0.034" displayname="getReturns_success()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:getReturns_success()]"/>
+    <testcase name="getReturnById_success" classname="com.return_service.controller.ReturnControllerTests" time="0.025" displayname="getReturnById_success()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:getReturnById_success()]">
+      <failure>java.lang.AssertionError: No value at JSON path "$.returnId"&#13;
+	at org.springframework.test.util.JsonPathExpectationsHelper.evaluateJsonPath(JsonPathExpectationsHelper.java:351)&#13;
+	at org.springframework.test.util.JsonPathExpectationsHelper.assertValue(JsonPathExpectationsHelper.java:148)&#13;
+	at org.springframework.test.web.servlet.result.JsonPathResultMatchers.lambda$value$2(JsonPathResultMatchers.java:112)&#13;
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)&#13;
+	at com.return_service.controller.ReturnControllerTests.getReturnById_success(ReturnControllerTests.java:200)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: com.jayway.jsonpath.PathNotFoundException: No results for path: $['returnId']&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="processReturn_studentForbidden" classname="com.return_service.controller.ReturnControllerTests" time="0.085" displayname="processReturn_studentForbidden()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:processReturn_studentForbidden()]"/>
+    <testcase name="processReturn_success" classname="com.return_service.controller.ReturnControllerTests" time="0.013" displayname="processReturn_success()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:processReturn_success()]">
+      <failure>java.lang.AssertionError: No value at JSON path "$.returnId"&#13;
+	at org.springframework.test.util.JsonPathExpectationsHelper.evaluateJsonPath(JsonPathExpectationsHelper.java:351)&#13;
+	at org.springframework.test.util.JsonPathExpectationsHelper.assertValue(JsonPathExpectationsHelper.java:148)&#13;
+	at org.springframework.test.web.servlet.result.JsonPathResultMatchers.lambda$value$2(JsonPathResultMatchers.java:112)&#13;
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)&#13;
+	at com.return_service.controller.ReturnControllerTests.processReturn_success(ReturnControllerTests.java:134)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+Caused by: com.jayway.jsonpath.PathNotFoundException: No results for path: $['returnId']&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="processReturn_conflict" classname="com.return_service.controller.ReturnControllerTests" time="0.015" displayname="processReturn_conflict()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:processReturn_conflict()]"/>
+    <testcase name="processReturn_serviceUnavailable" classname="com.return_service.controller.ReturnControllerTests" time="0.008" displayname="processReturn_serviceUnavailable()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:processReturn_serviceUnavailable()]"/>
+    <testcase name="getReturnsByIssue_success" classname="com.return_service.controller.ReturnControllerTests" time="0.01" displayname="getReturnsByIssue_success()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:getReturnsByIssue_success()]"/>
+    <testcase name="getReturnById_unauthorized" classname="com.return_service.controller.ReturnControllerTests" time="0.013" displayname="getReturnById_unauthorized()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:getReturnById_unauthorized()]"/>
+    <testcase name="processReturn_validationFailure" classname="com.return_service.controller.ReturnControllerTests" time="0.009" displayname="processReturn_validationFailure()" uniqueid="[engine:junit-jupiter]/[class:com.return_service.controller.ReturnControllerTests]/[method:processReturn_validationFailure()]">
+      <failure>java.lang.AssertionError: Status expected:&lt;400&gt; but was:&lt;200&gt;&#13;
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:61)&#13;
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:128)&#13;
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:640)&#13;
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)&#13;
+	at com.return_service.controller.ReturnControllerTests.processReturn_validationFailure(ReturnControllerTests.java:181)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</failure>
+    </testcase>
+  </testsuite>
+</testrun>

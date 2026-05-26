@@ -1,0 +1,55 @@
+package com.user_service.controller;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    // ✅ Create User
+    @PostMapping
+    public ResponseEntity<UserResponseDTO> createUser(
+            @Valid @RequestBody CreateUserDTO dto,
+            @RequestHeader("userId") String currentUserId) {
+
+        return ResponseEntity.ok(
+                userService.createUser(dto, currentUserId)
+        );
+    }
+
+    // ✅ Get All Users
+    @GetMapping
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+
+        return ResponseEntity.ok(
+                userService.getAllUsers()
+        );
+    }
+
+    // ✅ Get User By ID
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> getUserById(
+            @PathVariable String id) {
+
+        return ResponseEntity.ok(
+                userService.getUserById(id)
+        );
+    }
+
+    // ✅ Deactivate User
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<UserResponseDTO> deactivateUser(
+            @PathVariable String id,
+            @RequestHeader("userId") String currentUserId) {
+
+        return ResponseEntity.ok(
+                userService.deactivateUser(id, currentUserId)
+        );
+    }
+}

@@ -1,0 +1,8 @@
+package com.request_service.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.request_service.entity.RequestItem;
+
+public interface RequestItemRepository extends JpaRepository<RequestItem, String>{
+
+}

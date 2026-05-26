@@ -1,0 +1,383 @@
+package com.inventory_service.service.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Service;
+
+import com.inventory_service.dto.UpdateStockDTO;
+import com.inventory_service.dto.request.BulkStockUpdateDTO;
+import com.inventory_service.dto.request.CreateComponentDTO;
+import com.inventory_service.dto.request.StockUpdateItemDTO;
+import com.inventory_service.dto.response.ComponentResponseDTO;
+import com.inventory_service.dto.response.CurrentUser;
+import com.inventory_service.dto.response.StockUpdateResponseDTO;
+import com.inventory_service.entity.Component;
+import com.inventory_service.entity.ComponentHistory;
+import com.inventory_service.enums.ActionType;
+import com.inventory_service.enums.Role;
+import com.inventory_service.enums.Status;
+import com.inventory_service.exception.BadRequestException;
+import com.inventory_service.exception.ConflictException;
+import com.inventory_service.exception.ResourceNotFoundException;
+import com.inventory_service.exception.UnauthorizedException;
+import com.inventory_service.repository.ComponentHistoryRepository;
+import com.inventory_service.repository.InventoryRepository;
+import com.inventory_service.service.InventoryService;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Service
+public class InventoryServiceImpl implements InventoryService{
+	
+    private final InventoryRepository inventoryRepository;
+	private final ComponentHistoryRepository componentHistoryRepository; 
+    
+    
+    private void createHistory(Component component, String userId,
+            ActionType action, int quantityChanged,
+            String remarks) {
+
+    	ComponentHistory history = new ComponentHistory();
+
+    	history.setComponentId(component.getId());
+    	history.setAction(action);
+    	
+    	if (action == ActionType.DEDUCT && quantityChanged > 0) {
+    	    quantityChanged = -quantityChanged;
+    	}
+    	
+    	history.setQuantityChanged(quantityChanged);
+
+    	history.setTotalQuantityAfter(component.getTotalQuantity());
+    	history.setAvailableQuantityAfter(component.getAvailableQuantity());
+
+    	history.setPerformedBy(userId);
+    	history.setRemarks(remarks);
+
+    	componentHistoryRepository.save(history);
+    }
+    
+    @Transactional
+    @Override
+    public ComponentResponseDTO createComponent(CreateComponentDTO dto, CurrentUser currentUser) {
+
+    	String name = dto.getName().trim();
+    	
+    	validateInventoryAccess(currentUser);
+
+    	if (inventoryRepository.existsByName(name)) {
+    	    throw new ConflictException("Component already exists");
+    	}
+    	
+    	if (dto.getTotalQuantity() <= 0) {
+    	    throw new BadRequestException(
+    	        "Quantity must be greater than zero"
+    	    );
+    	}
+
+        Component component = new Component();
+        component.setName(dto.getName().trim());
+        component.setDescription(dto.getDescription());
+        component.setTotalQuantity(dto.getTotalQuantity());
+        component.setAvailableQuantity(dto.getTotalQuantity());
+        component.setActive(true);
+
+        component.setCreatedBy(currentUser.getId());
+        component.setUpdatedBy(currentUser.getId());
+
+        inventoryRepository.save(component);
+        
+        createHistory(
+        	    component,
+        	    currentUser.getId(),
+        	    ActionType.CREATE,
+        	    component.getTotalQuantity(),
+        	    "Component created"
+        	);
+
+        return mapToDTO(component);
+    }
+    
+    @Transactional
+    @Override
+    public ComponentResponseDTO increaseStock(UpdateStockDTO dto, CurrentUser currentUser) {
+    	
+    	validateInventoryAccess(currentUser);
+        Component component = inventoryRepository.findById(dto.getComponentId())
+                .orElseThrow(() -> new ResourceNotFoundException("Component not found"));
+
+        if (!component.isActive()) {
+            throw new ResourceNotFoundException("Component not found");
+        }
+
+        if (dto.getQuantity() <= 0) {
+            throw new BadRequestException("Quantity must be greater than zero");
+        }
+
+        component.setTotalQuantity(component.getTotalQuantity() + dto.getQuantity());
+        component.setAvailableQuantity(component.getAvailableQuantity() + dto.getQuantity());
+
+        component.setUpdatedBy(currentUser.getId());
+
+        inventoryRepository.save(component);
+        
+        createHistory(
+        	    component,
+        	    currentUser.getId(),
+        	    ActionType.INCREASE,
+        	    dto.getQuantity(),
+        	    "Stock increased"
+        	);
+
+        return mapToDTO(component);
+    }
+    
+    @Transactional
+    @Override
+    public ComponentResponseDTO reduceStock(UpdateStockDTO dto, CurrentUser currentUser ) {
+
+    	validateInventoryAccess(currentUser);
+        Component component = inventoryRepository.findById(dto.getComponentId())
+                .orElseThrow(() -> new ResourceNotFoundException("Component not found"));
+
+        if (!component.isActive()) {
+            throw new ResourceNotFoundException("Component not found");
+        }
+
+        int qty = dto.getQuantity();
+
+        if (qty <= 0) {
+            throw new BadRequestException("Quantity must be greater than zero");
+        }
+        
+        if (component.getTotalQuantity() < qty) {
+            throw new ConflictException("Insufficient total stock");
+        }
+
+        if (component.getAvailableQuantity() < qty) {
+            throw new ConflictException("Insufficient available stock");
+        }
+
+        component.setTotalQuantity(component.getTotalQuantity() - qty);
+        component.setAvailableQuantity(component.getAvailableQuantity() - qty);
+
+        component.setUpdatedBy(currentUser.getId());
+
+        inventoryRepository.save(component);
+        
+        createHistory(
+        	    component,
+        	    currentUser.getId(),
+        	    ActionType.REDUCE,
+        	    qty,
+        	    "Stock reduced"
+        	);
+
+        return mapToDTO(component);
+    }
+  
+    @Override
+    public List<ComponentResponseDTO> getAllComponents() {
+
+        return inventoryRepository.findAll().stream()
+                .filter(Component::isActive)
+                .map(this::mapToDTO)
+                .toList();
+    }
+    
+    @Override
+    public ComponentResponseDTO getComponentById(String id) {
+
+    	Component component =
+    	        inventoryRepository
+    	                .findByIdAndActiveTrue(id)
+    	                .orElseThrow(() ->
+    	                        new ResourceNotFoundException(
+    	                                "Component not found"
+    	                        )
+    	                );
+
+    	return mapToDTO(component);
+    }
+
+    @Override
+    public Map<String, Boolean> validateComponents(List<String> componentIds) {
+
+        Map<String, Boolean> result = new HashMap<>();
+
+        for (String id : componentIds) {
+            boolean exists = inventoryRepository.findById(id)
+                    .map(Component::isActive)
+                    .orElse(false);
+
+            result.put(id, exists);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public Map<String, Integer> getAvailableQuantities(List<String> componentIds) {
+
+        Map<String, Integer> result = new HashMap<>();
+
+        for (String id : componentIds) {
+            int available = inventoryRepository.findById(id)
+                    .filter(Component::isActive)
+                    .map(Component::getAvailableQuantity)
+                    .orElse(0);
+
+            result.put(id, available);
+        }
+
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public List<StockUpdateResponseDTO> deductStock(BulkStockUpdateDTO request, CurrentUser currentUser) {
+    	
+    	validateInventoryAccess(currentUser);
+        List<StockUpdateResponseDTO> response = new ArrayList<>();
+
+        for (StockUpdateItemDTO item : request.getItems()) {
+
+            Component component = inventoryRepository.findById(item.getComponentId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Component not found"));
+
+            if (!component.isActive()) {
+                throw new ResourceNotFoundException("Component not found");
+            }
+            
+            if (item.getQuantity() <= 0) {
+                throw new BadRequestException(
+                    "Quantity must be greater than zero"
+                );
+            }
+
+            if (component.getAvailableQuantity() < item.getQuantity()) {
+                throw new ConflictException("Insufficient stock for component: " + component.getName());
+            }
+
+            component.setAvailableQuantity(
+                    component.getAvailableQuantity() - item.getQuantity()
+            );
+
+            component.setUpdatedBy(currentUser.getId());
+
+            inventoryRepository.save(component);
+            
+            createHistory(
+            	    component,
+            	    currentUser.getId(),
+            	    ActionType.DEDUCT,
+            	    item.getQuantity(),
+            	    "Bulk deduction"
+            	);
+
+            response.add(new StockUpdateResponseDTO(
+                    component.getId(),
+                    item.getQuantity(),
+                    component.getAvailableQuantity()
+            ));
+        }
+
+        return response;
+    }
+
+    @Transactional
+	@Override
+	public List<StockUpdateResponseDTO> addBackStock(BulkStockUpdateDTO request, CurrentUser currentUser) {
+		// TODO Auto-generated method stub
+    	validateInventoryAccess(currentUser);
+    	
+    	List<StockUpdateResponseDTO> response = new ArrayList<>();
+
+	    for (StockUpdateItemDTO item : request.getItems()) {
+
+	        Component component = inventoryRepository.findById(item.getComponentId())
+	                .orElseThrow(() -> new ResourceNotFoundException("Component not found"));
+
+	        if (!component.isActive()) {
+	            throw new ResourceNotFoundException("Component not found");
+	        }
+
+	        if (item.getQuantity() <= 0) {
+	            throw new BadRequestException("Quantity must be greater than 0");
+	        }
+	        
+	        if (
+	        	    component.getAvailableQuantity() + item.getQuantity()
+	        	        > component.getTotalQuantity()
+	        	) {
+	        	    throw new ConflictException(
+	        	        "Available quantity cannot exceed total quantity"
+	        	    );
+	        	}
+
+	        // 🔥 Core logic
+	        component.setAvailableQuantity(
+	                component.getAvailableQuantity() + item.getQuantity()
+	        );
+
+	        component.setUpdatedBy(currentUser.getId());
+
+	        inventoryRepository.save(component);
+
+	        createHistory(
+	                component,
+	                currentUser.getId(),
+	                ActionType.ADD_BACK,   // NEW ENUM
+	                item.getQuantity(),
+	                "Returned from return service"
+	        );
+
+	        response.add(new StockUpdateResponseDTO(
+	                component.getId(),
+	                item.getQuantity(),
+	                component.getAvailableQuantity()
+	        ));
+	    }
+
+	    return response;
+	}
+    
+    private ComponentResponseDTO mapToDTO(Component component) {
+
+    	return ComponentResponseDTO.builder()
+    	        .id(component.getId())
+    	        .name(component.getName())
+    	        .description(component.getDescription())
+    	        .totalQuantity(component.getTotalQuantity())
+    	        .availableQuantity(component.getAvailableQuantity())
+    	        .build();
+    }
+    
+    private void validateInventoryAccess(CurrentUser currentUser) {
+        // 1. Guard clause for null user (highly recommended)
+        if (currentUser == null) {
+            throw new UnauthorizedException("User information is missing");
+        }
+
+        // 2. Enum comparison using == to prevent NullPointerException
+        if (currentUser.getStatus() != Status.ACTIVE) {
+            throw new UnauthorizedException(
+                    "Inactive user cannot perform this action"
+            );
+        }
+
+        // 3. Enum comparison using == for Role
+        if (currentUser.getRole() != Role.INSTRUCTOR) {
+            throw new UnauthorizedException(
+                    "Access denied"
+            );
+        }
+    }
+    
+    
+}
+

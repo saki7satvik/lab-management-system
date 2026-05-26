@@ -1,0 +1,99 @@
+package com.user_service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.user_service.dto.CreateUserDTO;
+import com.user_service.dto.UserResponseDTO;
+import com.user_service.entity.User;
+import com.user_service.enums.Role;
+import com.user_service.enums.Status;
+import com.user_service.repository.UserRepository;
+import com.user_service.service.UserService;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceTest {
+	@Mock
+	private UserRepository userRepository;
+	
+	@InjectMocks
+	private UserService userService;
+	
+	// ========================================================
+	// TEST DATA FACTORY
+	// ========================================================
+	static class TestDataFactory{
+		
+		static CreateUserDTO createUserDTO(Role role) {
+			return new CreateUserDTO(
+					"Test User",
+					"SampleID_001",
+					"test" + System.nanoTime() + "@mail.com",
+					"9090909090",
+					role
+					);
+		}
+		
+		static User creator(Role role, Status status) {
+			User user = new User();
+			user.setCollegeId("Creator_" + role);
+			user.setRole(role);
+			user.setStatus(status);
+			return user;
+		}
+	}
+	
+	// =======================================================
+	// USER TEST CASES
+	// =======================================================
+	@Nested
+	@DisplayName("Create User Tests")
+	class CreateUserTests{
+		
+		// SUCCESS CASE - WHAT HAPPENS WHEN THE USER IS SUCCESSFULLY CREATED
+		@Test
+		@DisplayName("Should create user when all the conditions are valid")
+		void createUser_success() {
+			User creator = TestDataFactory.creator(Role.ADMIN, Status.ACTIVE);
+			CreateUserDTO dto = TestDataFactory.createUserDTO(Role.STUDENT);
+			
+			when(userRepository.existsByCollegeId(dto.getCollegeId())).thenReturn(false);
+			when(userRepository.existsByEmail(dto.getEmail())).thenReturn(false);
+			when(userRepository.save(any(User.class)))
+			.thenAnswer(invocation -> invocation.getArgument(0));
+			
+			UserResponseDTO response = userService.createUser(dto, creator.getCollegeId());
+			
+			assertNotNull(response);
+			assertEquals(dto.getCollegeId(), response.getCollegeId());
+			assertEquals(dto.getEmail(), response.getEmail());
+			assertEquals(Role.STUDENT, response.getRole());
+			
+			verify(userRepository).existsByCollegeId(dto.getCollegeId());
+			verify(userRepository).existsByEmail(dto.getEmail());
+			verify(userRepository).save(any(User.class));
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+}

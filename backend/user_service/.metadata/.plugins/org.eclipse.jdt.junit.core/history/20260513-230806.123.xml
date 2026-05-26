@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="UserControllerTest" project="user_service" tests="10" started="10" failures="1" errors="0" ignored="0">
+  <testsuite name="com.user_service.controller.UserControllerTest" time="0.656" displayname="UserControllerTest" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]">
+    <testcase name="reactivateUser_success" classname="com.user_service.controller.UserControllerTest" time="0.278" displayname="reactivateUser_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:reactivateUser_success()]"/>
+    <testcase name="createUser_invalidDTO" classname="com.user_service.controller.UserControllerTest" time="0.184" displayname="createUser_invalidDTO()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:createUser_invalidDTO()]"/>
+    <testcase name="reactivateUser_forbidden" classname="com.user_service.controller.UserControllerTest" time="0.011" displayname="reactivateUser_forbidden()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:reactivateUser_forbidden()]"/>
+    <testcase name="deactivateUser_forbidden" classname="com.user_service.controller.UserControllerTest" time="0.01" displayname="deactivateUser_forbidden()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:deactivateUser_forbidden()]"/>
+    <testcase name="deactivateUser_notFound" classname="com.user_service.controller.UserControllerTest" time="0.015" displayname="deactivateUser_notFound()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:deactivateUser_notFound()]"/>
+    <testcase name="getUsers_unauthorized" classname="com.user_service.controller.UserControllerTest" time="0.013" displayname="getUsers_unauthorized()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:getUsers_unauthorized()]"/>
+    <testcase name="createUser_success" classname="com.user_service.controller.UserControllerTest" time="0.036" displayname="createUser_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:createUser_success()]"/>
+    <testcase name="deactivateUser_success" classname="com.user_service.controller.UserControllerTest" time="0.019" displayname="deactivateUser_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:deactivateUser_success()]"/>
+    <testcase name="createUser_forbidden" classname="com.user_service.controller.UserControllerTest" time="0.029" displayname="createUser_forbidden()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:createUser_forbidden()]">
+      <failure>java.lang.AssertionError: Status expected:&lt;403&gt; but was:&lt;201&gt;&#13;
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:61)&#13;
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:128)&#13;
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$9(StatusResultMatchers.java:640)&#13;
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:214)&#13;
+	at com.user_service.controller.UserControllerTest.createUser_forbidden(UserControllerTest.java:112)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</failure>
+    </testcase>
+    <testcase name="getUsers_success" classname="com.user_service.controller.UserControllerTest" time="0.043" displayname="getUsers_success()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.controller.UserControllerTest]/[method:getUsers_success()]"/>
+  </testsuite>
+</testrun>

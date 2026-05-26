@@ -1,0 +1,5 @@
+package com.api_gateway.exception;
+
+public class UnauthorizedException {
+
+}
