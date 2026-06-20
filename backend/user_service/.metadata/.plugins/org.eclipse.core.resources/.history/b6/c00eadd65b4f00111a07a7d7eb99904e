@@ -1,9 +1,0 @@
-package com.user_service.auth;
-
-import lombok.Getter;
-
-@Getter
-public class LoginRequestDTO {
-    private String collegeId;
-    private String password;
-}

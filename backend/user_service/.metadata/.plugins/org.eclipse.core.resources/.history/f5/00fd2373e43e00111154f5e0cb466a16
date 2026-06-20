@@ -1,8 +1,0 @@
-package com.user_service.service;
-
-import com.user_service.dto.CreateUserDTO;
-import com.user_service.dto.UserResponseDTO;
-
-public interface UserService {
-	UserResponseDTO createUser(CreateUserDTO dto, String currentUserId);
-}

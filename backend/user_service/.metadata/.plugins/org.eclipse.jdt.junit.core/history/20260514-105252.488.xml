@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="JwtFilterTest" project="user_service" tests="4" started="4" failures="0" errors="0" ignored="0">
-  <testsuite name="com.user_service.security.JwtFilterTest" time="0.917" displayname="JwtFilterTest" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.JwtFilterTest]">
-    <testcase name="shouldSkip_whenHeaderMissing" classname="com.user_service.security.JwtFilterTest" time="0.882" displayname="shouldSkip_whenHeaderMissing()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.JwtFilterTest]/[method:shouldSkip_whenHeaderMissing()]"/>
-    <testcase name="shouldSkip_whenHeaderInvalid" classname="com.user_service.security.JwtFilterTest" time="0.006" displayname="shouldSkip_whenHeaderInvalid()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.JwtFilterTest]/[method:shouldSkip_whenHeaderInvalid()]"/>
-    <testcase name="shouldSkip_whenTokenInvalid" classname="com.user_service.security.JwtFilterTest" time="0.013" displayname="shouldSkip_whenTokenInvalid()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.JwtFilterTest]/[method:shouldSkip_whenTokenInvalid()]"/>
-    <testcase name="shouldAuthenticate_whenTokenValid" classname="com.user_service.security.JwtFilterTest" time="0.012" displayname="shouldAuthenticate_whenTokenValid()" uniqueid="[engine:junit-jupiter]/[class:com.user_service.security.JwtFilterTest]/[method:shouldAuthenticate_whenTokenValid()]"/>
-  </testsuite>
-</testrun>
