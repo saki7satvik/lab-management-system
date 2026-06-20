@@ -1,5 +1,0 @@
-package com.return_service.service;
-
-public interface RequestClient {
-
-}
