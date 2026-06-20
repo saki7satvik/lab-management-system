@@ -1,8 +1,0 @@
-package com.request_service.service;
-
-import com.request_service.dto.external.UserDTO;
-
-public interface UserClient {
-
-    UserDTO getUserByCollegeId(String collegeId);
-}

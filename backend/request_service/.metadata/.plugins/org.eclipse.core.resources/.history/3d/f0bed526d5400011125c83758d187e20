@@ -1,5 +1,0 @@
-package com.request_service.exception;
-
-public class ConflictException {
-
-}

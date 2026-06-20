@@ -1,7 +1,0 @@
-package com.request_service.dto.response;
-
-public class ErrorResponse {
-    private int status;
-    private String message;
-    private long timestamp;
-}

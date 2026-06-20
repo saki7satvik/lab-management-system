@@ -1,5 +1,0 @@
-package com.request_service.dto.request;
-
-public class RequestItemDTO {
-
-}

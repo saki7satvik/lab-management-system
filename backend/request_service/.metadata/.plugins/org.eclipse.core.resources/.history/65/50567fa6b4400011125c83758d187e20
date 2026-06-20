@@ -1,5 +1,0 @@
-package com.request_service.service.impl;
-
-public class InventoryClientImpl {
-
-}

@@ -1,5 +1,0 @@
-package com.request_service.dto;
-
-public abstract class BaseDTO {
-
-}

@@ -1,5 +1,0 @@
-package com.request_service.config;
-
-public class SecurityConfig {
-
-}

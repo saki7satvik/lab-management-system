@@ -1,5 +1,0 @@
-package com.request_service.aop;
-
-public class PerformanceAspect {
-
-}
