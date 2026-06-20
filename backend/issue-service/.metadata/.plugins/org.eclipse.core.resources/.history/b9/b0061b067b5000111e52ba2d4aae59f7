@@ -1,5 +1,0 @@
-package com.issue_service.dto.response;
-
-public class CurrentUser {
-
-}
