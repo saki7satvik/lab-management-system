@@ -1,0 +1,75 @@
+# ==============================================================================
+# Root .gitignore for Lab Management System (Backend + Frontend)
+# ==============================================================================
+
+# --- Logs & Archives ---
+logs/
+*.log
+*.log.*
+*.gz
+
+# --- Environment & Secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Backend: Java / Maven / Spring Boot ---
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+HELP.md
+jacoco.exec
+
+# --- Frontend: Angular / Node / TypeScript ---
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+.sass-cache/
+coverage/
+__screenshots__/
+connect.lock
+typings/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- IDEs & Editors ---
+# Eclipse / STS
+.metadata/
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+*.launch
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# VS Code & Others
+.vscode/
+.history/
+.c9/
+*.sublime-workspace
+
+# --- OS Generated Files ---
+.DS_Store
+Thumbs.db
+*~
