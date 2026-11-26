@@ -1,0 +1,98 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowed-origins: http://localhost:4200
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/users/**
+        - id: auth-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/auth/**
+        - id: inventory-service
+          uri: lb://INVENTORY-SERVICE
+          predicates:
+            - Path=/components/**
+        - id: request-service
+          uri: lb://REQUEST-SERVICE
+          predicates:
+            - Path=/requests/**
+        - id: issue-service
+          uri: lb://ISSUE-SERVICE
+          predicates:
+            - Path=/issues/**
+        - id: return-service
+          uri: lb://RETURN-SERVICE
+          predicates:
+            - Path=/returns/**
+        - id: user-swagger
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/v3/api-docs
+          filters:
+            - RewritePath=/user-service/v3/api-docs, /v3/api-docs
+        - id: inventory-swagger
+          uri: lb://INVENTORY-SERVICE
+          predicates:
+            - Path=/inventory-service/v3/api-docs
+          filters:
+            - RewritePath=/inventory-service/v3/api-docs, /v3/api-docs
+        - id: request-swagger
+          uri: lb://REQUEST-SERVICE
+          predicates:
+            - Path=/request-service/v3/api-docs
+          filters:
+            - RewritePath=/request-service/v3/api-docs, /v3/api-docs
+        - id: issue-swagger
+          uri: lb://ISSUE-SERVICE
+          predicates:
+            - Path=/issue-service/v3/api-docs
+          filters:
+            - RewritePath=/issue-service/v3/api-docs, /v3/api-docs
+        - id: return-swagger
+          uri: lb://RETURN-SERVICE
+          predicates:
+            - Path=/return-service/v3/api-docs
+          filters:
+            - RewritePath=/return-service/v3/api-docs, /v3/api-docs
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: User Service
+        url: /user-service/v3/api-docs
+      - name: Inventory Service
+        url: /inventory-service/v3/api-docs
+      - name: Request Service
+        url: /request-service/v3/api-docs
+      - name: Issue Service
+        url: /issue-service/v3/api-docs
+      - name: Return Service
+        url: /return-service/v3/api-docs
